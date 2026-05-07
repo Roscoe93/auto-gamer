@@ -8,6 +8,7 @@ from websockets.asyncio.server import ServerConnection, serve
 
 from app.core.session_service import SessionService
 from app.core.run_controller import RunController
+from app.core.capture_service import CaptureService
 from app.windows.window_service import WindowService
 from app.scripts.registry import ScriptRegistry
 from app.scripts.profile_manager import ProfileManager
@@ -30,6 +31,8 @@ class BridgeWebSocketServer:
         self._run_controller = RunController(self._session_service, self._on_state_changed)
         self._script_registry = ScriptRegistry()
         self._profile_manager = ProfileManager()
+        self._capture_service = CaptureService(self._session_service, self._window_service)
+        self._capture_service.add_listener(self._on_preview_frame)
 
         # Setup Router
         self._router = MessageRouter()
@@ -39,6 +42,11 @@ class BridgeWebSocketServer:
 
         self._server = None
         self._active_connections: set[ServerConnection] = set()
+
+    def _on_preview_frame(self, payload: dict) -> None:
+        raw_payload = json.dumps(payload)
+        for conn in self._active_connections:
+            asyncio.create_task(conn.send(raw_payload))
 
     def _on_state_changed(self) -> None:
         # Broadcast state change to all active connections
@@ -52,12 +60,14 @@ class BridgeWebSocketServer:
             asyncio.create_task(conn.send(payload))
 
     async def start(self) -> None:
+        self._capture_service.start()
         self._server = await serve(self._handle_connection, self.host, self.port)
         sockets = self._server.sockets or []
         if sockets:
             self.port = sockets[0].getsockname()[1]
 
     async def stop(self) -> None:
+        self._capture_service.stop()
         if self._server is None:
             return
 

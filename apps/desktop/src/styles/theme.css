@@ -18,6 +18,16 @@
   --kuroneko-status-connecting: #E995FF;
   --kuroneko-status-offline: #884466;
 
+  /* Status & Accent */
+  --kuroneko-success: #00FF00;
+  --kuroneko-warning: #FFA500;
+  --kuroneko-danger: #FF4444;
+
+  /* Overlay colors */
+  --kuroneko-match: #00FF00;
+  --kuroneko-safe: #00BFFF;
+  --kuroneko-text-highlight: #FFA500;
+
   /* Button Palette */
   --kuroneko-btn-pause: #FFB86C;
   --kuroneko-btn-stop: #FF2A55;

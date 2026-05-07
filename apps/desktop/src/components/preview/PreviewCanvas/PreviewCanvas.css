@@ -1,0 +1,55 @@
+.preview-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* Default aspect ratio */
+  background-color: var(--kuroneko-panel);
+  border: 1px solid var(--kuroneko-border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-canvas.empty {
+  color: var(--kuroneko-text-secondary);
+}
+
+.preview-canvas.empty .hint {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.preview-canvas img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.overlay-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.box-rect {
+  fill: transparent;
+  stroke-width: 2;
+}
+
+.box-label-bg {
+  opacity: 0.8;
+}
+
+.box-text {
+  fill: #000;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: monospace;
+}

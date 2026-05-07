@@ -36,7 +36,13 @@ def create_session_router(
 
     async def handle_select_window(connection: ServerConnection, message: Dict[str, Any]) -> None:
         payload = message.get("payload", {})
-        session_service.update_window(payload.get("windowId"), payload.get("windowTitle"))
+        window_id = payload.get("windowId")
+        session_service.update_window(window_id, payload.get("windowTitle"))
+        
+        # 选中窗口后，尝试将其拉到前台以便截图
+        if window_id:
+            window_service.bring_to_front(window_id)
+            
         on_state_changed()
 
     router.register("session/get", handle_get)

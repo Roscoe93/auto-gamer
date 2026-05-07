@@ -34,6 +34,24 @@ export interface SessionSummary {
   metrics: SessionMetrics;
 };
 
+export interface PreviewOverlay {
+  id: string;
+  kind: string;
+  label: string;
+  score: number;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface PreviewFrame {
+  image: string; // base64 data uri
+  overlays: PreviewOverlay[];
+  originalWidth: number;
+  originalHeight: number;
+}
+
 type BridgeEvent =
   | { type: "connection/status"; payload: { state: string } }
   | { type: "connection/heartbeat"; payload: { ts: string } }
@@ -43,6 +61,7 @@ type BridgeEvent =
   | { type: "profiles/listed"; payload: Profile[] }
   | { type: "profiles/saved"; payload: Profile }
   | { type: "profiles/deleted"; payload: { id: string } }
+  | { type: "preview/frame"; payload: PreviewFrame }
   | { type: "error"; payload: { code: string; message: string } };
 
 type BridgeListener = (event: BridgeEvent) => void;

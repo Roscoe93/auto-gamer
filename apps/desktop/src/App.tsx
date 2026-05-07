@@ -6,6 +6,7 @@ import { Card } from "./components/layout/Card";
 import { WindowSelector } from "./components/controls/WindowSelector";
 import { RunControls } from "./components/controls/RunControls";
 import { ScriptPanel } from "./components/scripts/ScriptPanel";
+import { PreviewCanvas } from "./components/preview/PreviewCanvas";
 import "./App.css";
 
 const defaultSession: SessionSummary = {
@@ -92,6 +93,11 @@ export function App() {
         <Card className="span-2">
           <h2>参数配置</h2>
           <ScriptPanel client={client} connectionState={connectionState} />
+        </Card>
+
+        <Card className="span-2">
+          <h2>识别预览</h2>
+          <PreviewCanvas client={client} />
         </Card>
 
         <Card className="span-2">
