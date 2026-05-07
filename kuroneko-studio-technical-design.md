@@ -395,6 +395,10 @@ automation-core/
     api/
       websocket_server.py
       message_router.py
+      handlers/
+        session_handler.py
+        run_handler.py
+        script_handler.py
     core/
       app_service.py
       session_service.py
@@ -433,6 +437,14 @@ automation-core/
 ```
 
 ### 6.3 后端服务分层
+
+#### API Routing 层
+
+负责桥接网络与内部服务：
+
+- `websocket_server.py`: 维护 WebSocket 连接池与心跳机制，捕获全局异常。
+- `message_router.py`: 消息分发路由器，将不同 `type` 的请求路由到具体的 handler。
+- `handlers/`: 按业务领域拆分的消息处理器，避免单一文件无限膨胀。
 
 #### App service
 
@@ -977,24 +989,20 @@ data/
 
 建议把后端拆成三层能力：
 
-#### 第一层：平台能力层
+#### 第一层：平台适配与安全输入层 (Platform & Input)
 
-这一层完全不理解具体游戏，只提供通用操作能力：
+这一层完全不理解具体游戏，只提供通用的操作系统级能力与输入抽象：
 
-- 查找窗口
-- 聚焦窗口
-- 截图
-- 区域裁剪
-- 模板匹配
-- OCR
-- 颜色检测
-- 点击、按键、拖拽
-- 等待、超时、重试
-- 日志和产物落盘
+- 查找窗口与分辨率坐标归一化
+- macOS Quartz / Windows SendInput 硬件级输入注入
+- 拟人化延迟抖动与高斯随机偏移
+- 截图与区域裁剪
+- 模板匹配与 OCR
+- 全局安全热键监听 (Kill Switch)
 
-这一层解决的是“系统层面能做什么”，不解决“当前该做什么”。
+这一层解决的是“系统层面怎么看、怎么安全地动”。
 
-#### 第二层：游戏适配层
+#### 第二层：游戏适配层 (Game Adapter)
 
 这一层封装“某个游戏”的稳定差异，建议每个游戏一个 `GameAdapter`：
 
