@@ -64,14 +64,14 @@
 
 **任务列表：**
 
-- 定义 `SessionSummary` 数据模型
-- 实现 session service
-- 实现窗口枚举接口
-- 实现目标窗口选择与锁定
-- 实现运行按钮状态控制
-- 实现 `start / pause / resume / stop` 生命周期
-- 实现基础 metrics：运行时长、动作数、恢复次数
-- 前端接入会话头部与控制区
+- [x] 定义 `SessionSummary` 数据模型
+- [x] 实现 session service
+- [x] 实现窗口枚举接口
+- [x] 实现目标窗口选择与锁定
+- [x] 实现运行按钮状态控制
+- [x] 实现 `start / pause / resume / stop` 生命周期
+- [x] 实现基础 metrics：运行时长、动作数、恢复次数
+- [x] 前端接入会话头部与控制区
 
 **涉及模块：**
 

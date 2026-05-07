@@ -1,0 +1,110 @@
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kuroneko-kawaii-pink);
+  text-shadow: 0 0 8px rgba(233, 149, 255, 0.4);
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 2.6rem;
+  margin-bottom: 8px;
+  background: linear-gradient(to right, var(--kuroneko-text-primary), var(--kuroneko-accent-glow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(204, 255, 255, 0.1);
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: var(--kuroneko-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+h2::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  background: var(--kuroneko-accent);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--kuroneko-accent);
+}
+
+.subtitle,
+.card p {
+  color: var(--kuroneko-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.card p + p {
+  margin-top: 10px;
+}
+
+.card strong {
+  color: var(--kuroneko-text-primary);
+  font-weight: 600;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid transparent;
+  font-variant-numeric: tabular-nums;
+}
+
+.status::before {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status.connected {
+  color: var(--kuroneko-accent-glow);
+  border-color: rgba(204, 255, 255, 0.2);
+  background: rgba(66, 57, 174, 0.2);
+}
+.status.connected::before {
+  background: var(--kuroneko-accent-glow);
+  box-shadow: 0 0 8px var(--kuroneko-accent-glow);
+}
+
+.status.connecting {
+  color: var(--kuroneko-kawaii-pink);
+  border-color: rgba(233, 149, 255, 0.2);
+  background: rgba(233, 149, 255, 0.1);
+}
+.status.connecting::before {
+  background: var(--kuroneko-kawaii-pink);
+  box-shadow: 0 0 8px var(--kuroneko-kawaii-pink);
+}
+
+.status.offline {
+  color: var(--kuroneko-text-muted);
+  border-color: rgba(94, 98, 153, 0.2);
+}
+.status.offline::before {
+  background: var(--kuroneko-text-muted);
+}

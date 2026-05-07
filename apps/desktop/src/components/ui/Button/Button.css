@@ -1,0 +1,65 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  min-height: 36px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: var(--kuroneko-bg-card);
+  color: var(--kuroneko-text-primary);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.btn:not(:disabled):hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.btn:not(:disabled):active {
+}
+
+.btn-primary {
+  background: var(--kuroneko-accent);
+  color: #fff;
+  border-color: rgba(204, 255, 255, 0.2);
+}
+
+.btn-primary:not(:disabled):hover {
+  background-color: var(--kuroneko-accent);
+  border-color: var(--kuroneko-text-secondary);
+  color: var(--kuroneko-accent-glow);
+}
+
+.btn-pause {
+  background: rgba(255, 184, 108, 0.15);
+  color: var(--kuroneko-btn-pause);
+  border-color: rgba(255, 184, 108, 0.3);
+}
+
+.btn-pause:not(:disabled):hover {
+  background: rgba(255, 184, 108, 0.25);
+  border-color: var(--kuroneko-btn-pause);
+}
+
+.btn-stop {
+  background: rgba(255, 42, 85, 0.15);
+  color: var(--kuroneko-btn-stop);
+  border-color: rgba(255, 42, 85, 0.3);
+}
+
+.btn-stop:not(:disabled):hover {
+  background: rgba(255, 42, 85, 0.25);
+  border-color: var(--kuroneko-btn-stop);
+  color: #fff;
+}

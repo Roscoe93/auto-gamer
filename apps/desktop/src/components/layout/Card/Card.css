@@ -1,0 +1,33 @@
+.card {
+  background: var(--kuroneko-bg-panel);
+  border: 1px solid rgba(138, 142, 213, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 24px;
+  background: var(--kuroneko-bg-card);
+  position: relative;
+}
+
+.card:hover {
+  border-color: rgba(204, 255, 255, 0.4);
+}
+
+/* Add a subtle glow behind cards on hover */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--kuroneko-gradient-glow);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.card:hover::after {
+  opacity: 1;
+}

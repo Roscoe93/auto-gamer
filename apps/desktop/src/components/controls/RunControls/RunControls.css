@@ -1,0 +1,31 @@
+.metrics-panel {
+  display: flex;
+  gap: 24px;
+  padding: 12px 16px;
+  background: var(--kuroneko-bg-base);
+  border-radius: 6px;
+  border: 1px solid rgba(138, 142, 213, 0.15);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  flex-wrap: wrap;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-label {
+  color: var(--kuroneko-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace;
+  color: var(--kuroneko-accent-glow);
+  text-shadow: 0 0 8px rgba(204, 255, 255, 0.3);
+}

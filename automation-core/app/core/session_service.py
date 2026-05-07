@@ -1,7 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 
+
+@dataclass
+class SessionMetrics:
+    durationSeconds: int = 0
+    actionCount: int = 0
+    resumeCount: int = 0
 
 @dataclass
 class SessionSummary:
@@ -13,6 +19,7 @@ class SessionSummary:
     windowMode: str | None = None
     profileId: str | None = None
     profileName: str | None = None
+    metrics: SessionMetrics = field(default_factory=SessionMetrics)
 
     def to_payload(self) -> dict[str, object]:
         return asdict(self)

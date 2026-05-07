@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { BridgeClient, ConnectionState, SessionSummary } from "./services/bridge-client";
-import { Page, Panel, Card } from "./components/layout/Layout";
+import { Page } from "./components/layout/Page";
+import { Panel } from "./components/layout/Panel";
+import { Card } from "./components/layout/Card";
 import { WindowSelector } from "./components/controls/WindowSelector";
+import { RunControls } from "./components/controls/RunControls";
+import "./App.css";
 
 const defaultSession: SessionSummary = {
   runId: null,
@@ -11,7 +15,8 @@ const defaultSession: SessionSummary = {
   windowTitle: null,
   windowMode: null,
   profileId: null,
-  profileName: null
+  profileName: null,
+  metrics: { durationSeconds: 0, actionCount: 0, resumeCount: 0 }
 };
 
 export function App() {
@@ -81,6 +86,11 @@ export function App() {
           </div>
           <p>当前：{session.windowTitle ?? "未选择"}</p>
           <p>模式：{session.windowMode ?? "未设置"}</p>
+        </Card>
+
+        <Card className="span-2">
+          <h2>运行控制</h2>
+          <RunControls client={client} session={session} />
         </Card>
       </section>
 

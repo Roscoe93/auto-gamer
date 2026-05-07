@@ -8,6 +8,7 @@ from typing import Any
 from websockets.asyncio.server import ServerConnection, serve
 
 from app.core.session_service import SessionService
+from app.core.run_controller import RunController
 from app.windows.window_service import WindowService
 
 
@@ -18,7 +19,20 @@ class BridgeWebSocketServer:
         self.heartbeat_interval = heartbeat_interval
         self._session_service = SessionService()
         self._window_service = WindowService()
+        self._run_controller = RunController(self._session_service, self._on_state_changed)
         self._server = None
+        self._active_connections: set[ServerConnection] = set()
+
+    def _on_state_changed(self) -> None:
+        # Broadcast state change to all active connections
+        payload = json.dumps(
+            {
+                "type": "session/updated",
+                "payload": self._session_service.get_summary().to_payload(),
+            }
+        )
+        for conn in self._active_connections:
+            asyncio.create_task(conn.send(payload))
 
     async def start(self) -> None:
         self._server = await serve(self._handle_connection, self.host, self.port)
@@ -35,6 +49,7 @@ class BridgeWebSocketServer:
         self._server = None
 
     async def _handle_connection(self, connection: ServerConnection) -> None:
+        self._active_connections.add(connection)
         heartbeat_task = asyncio.create_task(self._heartbeat_loop(connection))
         await connection.send(json.dumps({"type": "connection/status", "payload": {"state": "connected"}}))
 
@@ -42,6 +57,7 @@ class BridgeWebSocketServer:
             async for raw_message in connection:
                 await self._handle_message(connection, raw_message)
         finally:
+            self._active_connections.remove(connection)
             heartbeat_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await heartbeat_task
@@ -76,14 +92,32 @@ class BridgeWebSocketServer:
         if message_type == "session/select-window":
             payload = message.get("payload", {})
             self._session_service.update_window(payload.get("windowId"), payload.get("windowTitle"))
-            await connection.send(
-                json.dumps(
-                    {
-                        "type": "session/updated",
-                        "payload": self._session_service.get_summary().to_payload(),
-                    }
-                )
-            )
+            self._on_state_changed()
+            return
+
+        if message_type == "run/start":
+            try:
+                self._run_controller.start()
+            except ValueError as e:
+                await connection.send(json.dumps({"type": "error", "payload": {"code": "START_FAILED", "message": str(e)}}))
+            return
+
+        if message_type == "run/pause":
+            try:
+                self._run_controller.pause()
+            except ValueError as e:
+                await connection.send(json.dumps({"type": "error", "payload": {"code": "PAUSE_FAILED", "message": str(e)}}))
+            return
+
+        if message_type == "run/resume":
+            try:
+                self._run_controller.resume()
+            except ValueError as e:
+                await connection.send(json.dumps({"type": "error", "payload": {"code": "RESUME_FAILED", "message": str(e)}}))
+            return
+
+        if message_type == "run/stop":
+            self._run_controller.stop()
             return
 
         await connection.send(

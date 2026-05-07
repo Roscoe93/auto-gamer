@@ -222,13 +222,26 @@ Tauri 壳层
 - **科技紫 (Accent)**：`--kuroneko-accent: #4239AE`，主强调色。
 - **霓虹蓝 (Accent Glow)**：`--kuroneko-accent-glow: #CCFFFF`，高亮、连接态、Hover 等特效。
 - **猫垫粉 (Kawaii Pink)**：`--kuroneko-kawaii-pink: #E995FF`，作为警告、过渡态（如 connecting）及特殊强调色的点缀。
+- **霓虹琥珀黄 (Amber)**：`--kuroneko-amber: #FFB86C`，用于暂停、警告等控件的中间态。
+- **霓虹猩红 (Crimson)**：`--kuroneko-crimson: #FF2A55`，用于停止、危险等高危操作控件。
 
 **高级质感与渐变**：
 - **毛玻璃效果 (Glassmorphism)**：卡片和面板需叠加 `backdrop-filter: blur(10px)`。
 - **全局渐变光晕**：`--kuroneko-gradient-glow` 配合 `radial-gradient` 为悬停卡片提供放射状的呼吸光晕。
 - **科技感渐变**：`--kuroneko-gradient-primary` 等线性渐变应用于标题发光、边框特效及装饰线条。
 
-### 5.2 前端职责
+### 5.2 控件 UI 与性能规范 (Controls & Performance)
+
+KuroNeko Studio 的核心控制按钮必须体现“桌面客户端的手感”以及“极客发光风格”，但必须兼顾高频渲染性能：
+- **零过渡动画原则**：为了避免与底层背景的 `backdrop-filter: blur(10px)` 发生复杂的重绘冲突，所有组件（按钮、卡片、面板、下拉框）**严禁**在 `:hover` 等交互状态下使用 `transition: all`、`transform` 位移、`box-shadow` 发光渐变或 `opacity` 过渡。所有悬停状态应瞬间切换基础的颜色值，确保 GPU 零负担。
+- **防止布局抖动**：所有包含动态数字的组件（如运行时长、动作数等指标）必须应用 `font-variant-numeric: tabular-nums`，防止数字宽度变化导致外层容器不断触发重新布局计算（Layout Thrashing）。
+- **基础按钮 (`.btn`)**：使用深蓝灰 `rgba(32, 31, 78, 0.4)` 作为底色，带有微妙的 1px 亮色内阴影模拟物理凸起感。圆角为 `999px`（胶囊形状）。
+- **主要操作 (`.btn-primary`)**：用于“开始运行”、“继续”。常态为科技紫，Hover 时背景色不变，文字色提亮为霓虹蓝（`#CCFFFF`），边框色变为次级文本色。严禁在此处使用 CSS 渐变色切换。
+- **暂停操作 (`.btn-pause`)**：Hover 时触发霓虹琥珀黄（`#FFB86C`）的边框色变化。
+- **危险操作 (`.btn-stop`)**：用于“停止”。Hover 时触发霓虹猩红（`#FF2A55`）的强烈警告。
+- **禁用态 (`:disabled`)**：直接使用 CSS filter `grayscale(1)` 和 `opacity: 0.5`，移除所有 Hover 交互。
+
+### 5.3 前端职责
 
 前端负责：
 

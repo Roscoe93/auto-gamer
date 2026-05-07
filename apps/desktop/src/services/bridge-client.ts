@@ -1,14 +1,21 @@
 export type ConnectionState = "connecting" | "connected" | "offline";
 
-export type SessionSummary = {
+export interface SessionMetrics {
+  durationSeconds: number;
+  actionCount: number;
+  resumeCount: number;
+}
+
+export interface SessionSummary {
   runId: string | null;
-  status: string;
+  status: "idle" | "running" | "paused";
   platform: string;
   windowId: string | null;
   windowTitle: string | null;
   windowMode: string | null;
   profileId: string | null;
   profileName: string | null;
+  metrics: SessionMetrics;
 };
 
 type BridgeEvent =
@@ -65,5 +72,21 @@ export class BridgeClient {
       type: "session/select-window",
       payload: { windowId, windowTitle }
     });
+  }
+
+  startRun(): void {
+    this.send({ type: "run/start" });
+  }
+
+  pauseRun(): void {
+    this.send({ type: "run/pause" });
+  }
+
+  resumeRun(): void {
+    this.send({ type: "run/resume" });
+  }
+
+  stopRun(): void {
+    this.send({ type: "run/stop" });
   }
 }
