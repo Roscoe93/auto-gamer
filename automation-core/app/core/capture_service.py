@@ -57,22 +57,26 @@ class CaptureService:
                 # 1. Get dynamic window rect
                 rect = self.window_service.get_window_rect(window_id)
                 if not rect or rect.width <= 0 or rect.height <= 0:
-                    # If window cannot be found or minimized, wait
-                    await asyncio.sleep(0.1)
+                    # print(f"Cannot get rect for {window_id}")
+                    await asyncio.sleep(0.5)
                     continue
 
                 # 2. Capture Region
+                # 兼容 macOS Retina 屏幕 (物理像素通常是逻辑坐标的 2 倍)
+                # 这里为了稳妥，先用逻辑坐标截取。如果遇到 Retina，mss 可能会截到错位的区域
+                # 最好的做法是用 mss.monitors 获取缩放比例，但在 POC 阶段先放宽限制
                 region = {
-                    "top": rect.y, 
-                    "left": rect.x, 
-                    "width": rect.width, 
-                    "height": rect.height
+                    "top": int(rect.y), 
+                    "left": int(rect.x), 
+                    "width": int(rect.width), 
+                    "height": int(rect.height)
                 }
                 
                 try:
                     sct_img = sct.grab(region)
-                except mss.exception.ScreenShotError:
-                    await asyncio.sleep(0.1)
+                except Exception as e:
+                    print(f"Screenshot error: {e}")
+                    await asyncio.sleep(0.5)
                     continue
                     
                 img = np.array(sct_img)
