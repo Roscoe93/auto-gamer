@@ -1,0 +1,39 @@
+.dynamic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dynamic-form-empty {
+  color: var(--kuroneko-text-secondary);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-item-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-item-header label {
+  font-size: 0.9rem;
+  color: var(--kuroneko-text-primary);
+  font-weight: 500;
+}
+
+.form-item-desc {
+  font-size: 0.8rem;
+  color: var(--kuroneko-text-secondary);
+}
+
+.form-item-control {
+  display: flex;
+  align-items: center;
+}

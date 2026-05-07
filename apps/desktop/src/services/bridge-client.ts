@@ -1,3 +1,19 @@
+export interface ScriptManifest {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  author: string;
+  schema: Record<string, any>;
+}
+
+export interface Profile {
+  id: string;
+  scriptId: string;
+  name: string;
+  parameters: Record<string, any>;
+}
+
 export type ConnectionState = "connecting" | "connected" | "offline";
 
 export interface SessionMetrics {
@@ -23,6 +39,10 @@ type BridgeEvent =
   | { type: "connection/heartbeat"; payload: { ts: string } }
   | { type: "session/updated"; payload: SessionSummary }
   | { type: "session/windows-listed"; payload: Array<{ id: string; title: string }> }
+  | { type: "scripts/listed"; payload: ScriptManifest[] }
+  | { type: "profiles/listed"; payload: Profile[] }
+  | { type: "profiles/saved"; payload: Profile }
+  | { type: "profiles/deleted"; payload: { id: string } }
   | { type: "error"; payload: { code: string; message: string } };
 
 type BridgeListener = (event: BridgeEvent) => void;
@@ -88,5 +108,21 @@ export class BridgeClient {
 
   stopRun(): void {
     this.send({ type: "run/stop" });
+  }
+
+  listScripts(): void {
+    this.send({ type: "scripts/list" });
+  }
+
+  listProfiles(): void {
+    this.send({ type: "profiles/list" });
+  }
+
+  saveProfile(profile: Partial<Profile>): void {
+    this.send({ type: "profiles/save", payload: profile });
+  }
+
+  deleteProfile(id: string): void {
+    this.send({ type: "profiles/delete", payload: { id } });
   }
 }

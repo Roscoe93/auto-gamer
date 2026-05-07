@@ -1,0 +1,25 @@
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  min-height: 36px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--kuroneko-text-primary);
+  background: var(--kuroneko-bg-card);
+  border: 1px solid rgba(138, 142, 213, 0.2);
+  border-radius: 6px;
+  outline: none;
+}
+
+.input:hover {
+  border-color: rgba(204, 255, 255, 0.4);
+}
+
+.input:focus {
+  border-color: var(--kuroneko-accent-glow);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

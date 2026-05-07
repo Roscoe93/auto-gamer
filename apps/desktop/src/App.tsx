@@ -5,6 +5,7 @@ import { Panel } from "./components/layout/Panel";
 import { Card } from "./components/layout/Card";
 import { WindowSelector } from "./components/controls/WindowSelector";
 import { RunControls } from "./components/controls/RunControls";
+import { ScriptPanel } from "./components/scripts/ScriptPanel";
 import "./App.css";
 
 const defaultSession: SessionSummary = {
@@ -60,7 +61,7 @@ export function App() {
   return (
     <Page>
       <Panel>
-        <p className="eyebrow">阶段 2: Session 与运行控制</p>
+        <p className="eyebrow">阶段 3: 脚本、Profile 与参数管理</p>
         <h1>KuroNeko Studio</h1>
         <p className="subtitle">Tauri 壳层 + React 前端 + Python bridge 服务</p>
       </Panel>
@@ -86,6 +87,11 @@ export function App() {
           </div>
           <p>当前：{session.windowTitle ?? "未选择"}</p>
           <p>模式：{session.windowMode ?? "未设置"}</p>
+        </Card>
+
+        <Card className="span-2">
+          <h2>参数配置</h2>
+          <ScriptPanel client={client} connectionState={connectionState} />
         </Card>
 
         <Card className="span-2">
