@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Automation UI Prototypes</title>
+    <style>
+      :root {
+        --bg: #f4efe7;
+        --panel: rgba(255, 255, 255, 0.78);
+        --text: #1d1b19;
+        --muted: #70675d;
+        --line: rgba(29, 27, 25, 0.12);
+        --accent: #bf5a36;
+        --accent-2: #1f4f46;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(191, 90, 54, 0.12), transparent 24rem),
+          radial-gradient(circle at bottom right, rgba(31, 79, 70, 0.15), transparent 26rem),
+          linear-gradient(180deg, #f7f3ec 0%, #ebe2d5 100%);
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 48px 24px 72px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+        align-items: end;
+        margin-bottom: 28px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.8rem, 6vw, 5.8rem);
+        line-height: 0.94;
+        font-weight: 400;
+      }
+
+      .kicker {
+        margin: 0 0 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .intro {
+        margin: 0;
+        font-size: 1.02rem;
+        line-height: 1.65;
+        color: var(--muted);
+        max-width: 42rem;
+      }
+
+      .meta {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        backdrop-filter: blur(18px);
+        padding: 18px;
+      }
+
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .meta-row:last-child {
+        border-bottom: 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+
+      a.card {
+        color: inherit;
+        text-decoration: none;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        backdrop-filter: blur(18px);
+        padding: 18px;
+        min-height: 240px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      a.card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(191, 90, 54, 0.35);
+        box-shadow: 0 18px 40px rgba(43, 33, 23, 0.08);
+      }
+
+      .swatch {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .swatch span {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 1.6rem;
+        font-weight: 400;
+      }
+
+      .desc {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .tagline {
+        margin-top: 18px;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent-2);
+      }
+
+      @media (max-width: 840px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="kicker">Cross-platform operator console</p>
+          <h1>Five UI directions for the game automation desktop app.</h1>
+          <p class="intro">
+            Each prototype keeps the same product core in view: window selection, script orchestration,
+            live logs, recognition preview, and stop controls. What changes is the personality, pacing,
+            and operational mood.
+          </p>
+        </div>
+        <aside class="meta">
+          <div class="meta-row"><span>Scope</span><strong>Windows + macOS</strong></div>
+          <div class="meta-row"><span>Target</span><strong>Windowed desktop games</strong></div>
+          <div class="meta-row"><span>Format</span><strong>Static HTML prototypes</strong></div>
+          <div class="meta-row"><span>Focus</span><strong>Logs, start/stop, extensible scripts</strong></div>
+        </aside>
+      </section>
+
+      <section class="grid">
+        <a class="card" href="./prototype-1-poetic-nocturne.html">
+          <div>
+            <div class="swatch">
+              <span style="background:#151822"></span>
+              <span style="background:#a98f7a"></span>
+              <span style="background:#d6cab8"></span>
+            </div>
+            <h2>Nocturne Operator</h2>
+            <p class="desc">
+              Poetic, quiet, and cinematic. Reads like a control room for long overnight runs with soft
+              contrast and calm status rhythm.
+            </p>
+          </div>
+          <div class="tagline">Editorial / atmospheric / reflective</div>
+        </a>
+
+        <a class="card" href="./prototype-2-industrial-grid.html">
+          <div>
+            <div class="swatch">
+              <span style="background:#f1eee7"></span>
+              <span style="background:#212121"></span>
+              <span style="background:#c55e33"></span>
+            </div>
+            <h2>Signal Workshop</h2>
+            <p class="desc">
+              Industrial and practical. Built for dense scanning, quick toggles, and a little field-manual
+              toughness without feeling messy.
+            </p>
+          </div>
+          <div class="tagline">Utilitarian / bright / workshop</div>
+        </a>
+
+        <a class="card" href="./prototype-3-neon-tactical.html">
+          <div>
+            <div class="swatch">
+              <span style="background:#061217"></span>
+              <span style="background:#1ef2c1"></span>
+              <span style="background:#f7ff87"></span>
+            </div>
+            <h2>Neon Tactical</h2>
+            <p class="desc">
+              High-contrast command center energy. More kinetic, more game-adjacent, better for teams who
+              like immediate visual response.
+            </p>
+          </div>
+          <div class="tagline">Tactical / high-signal / vivid</div>
+        </a>
+
+        <a class="card" href="./prototype-4-organic-studio.html" style="border-color:rgba(31,79,70,0.32); box-shadow:0 18px 40px rgba(31,79,70,0.08);">
+          <div>
+            <div class="swatch">
+              <span style="background:#f7f4ee"></span>
+              <span style="background:#255449"></span>
+              <span style="background:#8cb4a4"></span>
+            </div>
+            <h2>Quiet Studio</h2>
+            <p class="desc">
+              Softer and more humane. Good when the operator spends long hours with the tool and wants less
+              visual fatigue without losing precision.
+            </p>
+          </div>
+          <div class="tagline">Organic / calm / low fatigue / selected</div>
+        </a>
+
+        <a class="card" href="./prototype-5-brutalist-telemetry.html">
+          <div>
+            <div class="swatch">
+              <span style="background:#efe5d4"></span>
+              <span style="background:#0e0e0e"></span>
+              <span style="background:#ef4e2a"></span>
+            </div>
+            <h2>Telemetry Brut</h2>
+            <p class="desc">
+              Bold, raw, and unapologetic. Prioritizes commanding hierarchy and operational pressure over
+              polish in the conventional sense.
+            </p>
+          </div>
+          <div class="tagline">Brutalist / assertive / command-heavy</div>
+        </a>
+      </section>
+    </main>
+  </body>
+</html>

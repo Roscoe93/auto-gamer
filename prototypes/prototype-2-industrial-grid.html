@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signal Workshop</title>
+    <style>
+      :root {
+        --bg: #ebe6dc;
+        --panel: #f7f3eb;
+        --ink: #1e1b17;
+        --muted: #70675d;
+        --line: #cfc4b5;
+        --accent: #cb6032;
+        --olive: #586449;
+        --steel: #55636f;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(0deg, rgba(0,0,0,0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px),
+          linear-gradient(180deg, #f3efe7 0%, #e8e0d2 100%);
+        background-size: 24px 24px, 24px 24px, auto;
+        color: var(--ink);
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+      }
+
+      .left {
+        border-right: 2px solid var(--ink);
+        padding: 18px;
+        background: rgba(255,255,255,0.22);
+      }
+
+      .brand {
+        padding: 20px;
+        background: var(--ink);
+        color: #f7f3eb;
+        margin-bottom: 18px;
+      }
+
+      .brand h1 {
+        margin: 0 0 10px;
+        font-size: 2rem;
+        line-height: 0.96;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .brand p {
+        margin: 0;
+        color: rgba(247,243,235,0.74);
+        line-height: 1.5;
+      }
+
+      .section {
+        border: 2px solid var(--ink);
+        background: var(--panel);
+        margin-bottom: 14px;
+      }
+
+      .section h2 {
+        margin: 0;
+        padding: 10px 14px;
+        font-size: 0.86rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        border-bottom: 2px solid var(--ink);
+        background: #ede7da;
+      }
+
+      .section-body {
+        padding: 12px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid var(--line);
+        margin-bottom: 10px;
+        background: #fcfaf6;
+      }
+
+      .item.active {
+        border-color: var(--accent);
+        box-shadow: inset 4px 0 0 var(--accent);
+      }
+
+      .item strong {
+        display: block;
+        font-size: 0.96rem;
+      }
+
+      .item span {
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .main {
+        padding: 18px;
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 16px;
+      }
+
+      .toolbar, .status, .workspace, .logs {
+        border: 2px solid var(--ink);
+        background: var(--panel);
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px;
+        align-items: center;
+      }
+
+      .window-chip {
+        display: inline-flex;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid var(--line);
+        background: #fffdf9;
+        padding: 10px 12px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 2px solid var(--ink);
+        background: #fffdfa;
+        color: var(--ink);
+        padding: 10px 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .status {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .stat {
+        padding: 14px;
+        border-right: 2px solid var(--ink);
+      }
+
+      .stat:last-child {
+        border-right: 0;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 1.6rem;
+        margin-bottom: 6px;
+      }
+
+      .stat span {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.72rem;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+
+      .preview {
+        min-height: 420px;
+        border-right: 2px solid var(--ink);
+        padding: 16px;
+      }
+
+      .preview-box {
+        height: 100%;
+        border: 2px dashed var(--steel);
+        background:
+          linear-gradient(135deg, rgba(85,99,111,0.06), rgba(203,96,50,0.08)),
+          #f0ece4;
+        position: relative;
+      }
+
+      .target {
+        position: absolute;
+        border: 2px solid var(--accent);
+      }
+
+      .target.one { inset: 44px 48% 58% 34px; }
+      .target.two { inset: 56% 26px 34px 44%; border-color: var(--olive); }
+
+      .right-column {
+        padding: 16px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        padding: 14px;
+        background: #fffdf9;
+      }
+
+      .logs {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+      }
+
+      .log-stream {
+        padding: 14px;
+        border-right: 2px solid var(--ink);
+      }
+
+      .log {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .log:last-child {
+        border-bottom: 0;
+      }
+
+      .sidebar-mini {
+        padding: 14px;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-bottom: 8px;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 4px 8px;
+        background: #efe3d6;
+      }
+
+      @media (max-width: 1120px) {
+        .app { grid-template-columns: 1fr; }
+        .workspace, .logs, .status { grid-template-columns: 1fr; }
+        .preview { border-right: 0; border-bottom: 2px solid var(--ink); }
+        .log-stream { border-right: 0; border-bottom: 2px solid var(--ink); }
+        .stat { border-right: 0; border-bottom: 2px solid var(--ink); }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <aside class="left">
+        <div class="brand">
+          <h1>Signal<br />Workshop</h1>
+          <p>Built like a field notebook for repeatable runs, clean diagnostics, and script maintenance.</p>
+        </div>
+
+        <section class="section">
+          <h2>Script rack</h2>
+          <div class="section-body">
+            <div class="item active"><strong>Daily Route A</strong><span>Stable / 1080p / 7m average</span></div>
+            <div class="item"><strong>Material Farm</strong><span>Loop / OCR fallback enabled</span></div>
+            <div class="item"><strong>Quest Sweep</strong><span>Experimental / manual confirm</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Profiles</h2>
+          <div class="section-body">
+            <div class="item"><strong>Win / Borderless</strong><span>Capture region locked</span></div>
+            <div class="item"><strong>Mac / Windowed</strong><span>Retina offset normalized</span></div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="main">
+        <header class="toolbar">
+          <div class="window-chip">
+            <strong>Target window:</strong>
+            <span>Aether Chronicles / standard window / focused</span>
+          </div>
+          <div class="controls">
+            <button class="primary">Start</button>
+            <button>Pause</button>
+            <button>Resume</button>
+            <button>Stop</button>
+          </div>
+        </header>
+
+        <section class="status">
+          <div class="stat"><strong>RUN</strong><span>State: active</span></div>
+          <div class="stat"><strong>0.94</strong><span>Match confidence</span></div>
+          <div class="stat"><strong>41</strong><span>Input actions</span></div>
+          <div class="stat"><strong>F12</strong><span>Emergency stop</span></div>
+        </section>
+
+        <section class="workspace">
+          <div class="preview">
+            <div class="preview-box">
+              <div class="target one"></div>
+              <div class="target two"></div>
+            </div>
+          </div>
+          <div class="right-column">
+            <div class="card">
+              <span class="badge">Current step</span>
+              <strong>Reward confirmation detected</strong>
+              <p>Template match succeeded, OCR fallback bypassed, waiting 0.6s before confirm click.</p>
+            </div>
+            <div class="card">
+              <span class="badge">Permissions</span>
+              <strong>All checks green</strong>
+              <p>Input driver healthy, screenshot path healthy, window handle still valid.</p>
+            </div>
+            <div class="card">
+              <span class="badge">Next transition</span>
+              <strong>Confirm -> return -> inventory</strong>
+              <p>If no banner disappears after click, trigger bounded recovery branch and refocus.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="logs">
+          <div class="log-stream">
+            <div class="log"><strong>16:16:42</strong> task_button located at region 02 / confidence 0.94</div>
+            <div class="log"><strong>16:16:43</strong> click event sent via platform adapter windows</div>
+            <div class="log"><strong>16:16:45</strong> panel transition observed / frame delta within threshold</div>
+            <div class="log"><strong>16:16:47</strong> reward_confirm matched / waiting for animation settle</div>
+          </div>
+          <aside class="sidebar-mini">
+            <div class="card">
+              <span class="badge">Run note</span>
+              <strong>Operator overrides enabled</strong>
+              <p>Pause and inspect at any time without losing script session state.</p>
+            </div>
+          </aside>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telemetry Brut</title>
+    <style>
+      :root {
+        --bg: #e9dfcf;
+        --panel: #f4ecde;
+        --ink: #111111;
+        --muted: #62584d;
+        --line: #111111;
+        --accent: #ef4e2a;
+        --acid: #d6ff3a;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(90deg, rgba(17,17,17,0.05) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(17,17,17,0.05) 1px, transparent 1px),
+          linear-gradient(180deg, #efe5d5 0%, #e4d6c1 100%);
+        background-size: 28px 28px, 28px 28px, auto;
+        color: var(--ink);
+        font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      }
+
+      .app {
+        min-height: 100vh;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 16px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 3px solid var(--line);
+      }
+
+      .left {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+      }
+
+      .hero {
+        padding: 18px;
+        background: var(--accent);
+        color: #fff9f0;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(2.6rem, 6vw, 5rem);
+        line-height: 0.86;
+        text-transform: uppercase;
+      }
+
+      .hero p {
+        margin: 14px 0 0;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      .block-title {
+        padding: 10px 12px;
+        border-bottom: 3px solid var(--line);
+        font-size: 0.86rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        background: #111111;
+        color: #f4ecde;
+      }
+
+      .list-item {
+        padding: 14px 12px;
+        border-bottom: 2px solid var(--line);
+      }
+
+      .list-item:last-child { border-bottom: 0; }
+
+      .list-item strong {
+        display: block;
+        font-size: 1rem;
+        text-transform: uppercase;
+      }
+
+      .list-item span, .copy, .logline {
+        font-family: Arial, sans-serif;
+      }
+
+      .list-item span {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .active {
+        background: rgba(239,78,42,0.12);
+      }
+
+      .main {
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 16px;
+      }
+
+      .toolbar {
+        padding: 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .window {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+      }
+
+      .copy {
+        color: var(--muted);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 3px solid var(--line);
+        background: #fef8ee;
+        color: var(--ink);
+        padding: 10px 14px;
+        font: inherit;
+        text-transform: uppercase;
+      }
+
+      .primary {
+        background: var(--acid);
+      }
+
+      .danger {
+        background: var(--accent);
+        color: white;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .metric {
+        padding: 14px;
+        border-right: 3px solid var(--line);
+      }
+
+      .metric:last-child { border-right: 0; }
+
+      .metric strong {
+        display: block;
+        font-size: 2rem;
+      }
+
+      .metric span {
+        font-family: Arial, sans-serif;
+        color: var(--muted);
+        text-transform: uppercase;
+        font-size: 0.74rem;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+
+      .preview {
+        min-height: 420px;
+        border-right: 3px solid var(--line);
+        position: relative;
+        background:
+          linear-gradient(180deg, rgba(17,17,17,0.08), rgba(17,17,17,0.18)),
+          linear-gradient(135deg, #dacbb4 0%, #b7a489 42%, #8f7d67 100%);
+      }
+
+      .preview::before,
+      .preview::after {
+        content: "";
+        position: absolute;
+        border: 3px solid var(--line);
+      }
+
+      .preview::before {
+        inset: 52px 46% 60% 30px;
+        background: rgba(214,255,58,0.18);
+      }
+
+      .preview::after {
+        inset: 58% 26px 28px 42%;
+        background: rgba(239,78,42,0.12);
+      }
+
+      .preview-tag {
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        background: var(--ink);
+        color: #f4ecde;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+
+      .cards {
+        display: grid;
+      }
+
+      .card {
+        padding: 14px;
+        border-bottom: 3px solid var(--line);
+      }
+
+      .card:last-child { border-bottom: 0; }
+
+      .card strong {
+        display: block;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+      }
+
+      .card p {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .logs {
+        padding: 0 14px 10px;
+      }
+
+      .logline {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 2px solid var(--line);
+      }
+
+      .logline:last-child { border-bottom: 0; }
+
+      @media (max-width: 1120px) {
+        .app, .workspace { grid-template-columns: 1fr; }
+        .metrics { grid-template-columns: 1fr 1fr; }
+        .preview { border-right: 0; border-bottom: 3px solid var(--line); }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <aside class="left">
+        <section class="hero panel">
+          <h1>Telemetry<br />Brut</h1>
+          <p>Raw, loud, and decisive. This one treats the product like a mission board, with maximum hierarchy and minimal hesitation.</p>
+        </section>
+
+        <section class="panel">
+          <div class="block-title">Prototype 05 / Scripts</div>
+          <div class="list-item active"><strong>Daily Sweep</strong><span>Primary run / standard window</span></div>
+          <div class="list-item"><strong>Resource Farm</strong><span>Loop route / retries 2</span></div>
+          <div class="list-item"><strong>Inbox Claim</strong><span>Short branch / OCR light</span></div>
+        </section>
+
+        <section class="panel">
+          <div class="block-title">Hotkeys</div>
+          <div class="list-item"><strong>F8</strong><span>Pause run</span></div>
+          <div class="list-item"><strong>F9</strong><span>Resume run</span></div>
+          <div class="list-item"><strong>F12</strong><span>Emergency stop</span></div>
+        </section>
+      </aside>
+
+      <section class="main">
+        <header class="toolbar panel">
+          <div>
+            <div class="window">Aether Chronicles / Window Lock Active</div>
+            <div class="copy">Windows + macOS desktop automation / no anti-cheat assumptions</div>
+          </div>
+          <div class="controls">
+            <button class="primary">Start</button>
+            <button>Pause</button>
+            <button>Resume</button>
+            <button class="danger">Stop</button>
+          </div>
+        </header>
+
+        <section class="metrics panel">
+          <div class="metric"><strong>RUN</strong><span>Active state</span></div>
+          <div class="metric"><strong>18M</strong><span>Elapsed time</span></div>
+          <div class="metric"><strong>42</strong><span>Actions sent</span></div>
+          <div class="metric"><strong>0.94</strong><span>Match score</span></div>
+        </section>
+
+        <section class="workspace panel">
+          <div class="preview">
+            <div class="preview-tag">Recognition Frame</div>
+          </div>
+          <div class="cards">
+            <div class="card">
+              <strong>Current move</strong>
+              <p>Reward confirm detected. Dispatching click after animation settle window closes.</p>
+            </div>
+            <div class="card">
+              <strong>Fallback path</strong>
+              <p>If the panel does not dismiss after one click, refocus, recapture, and branch into pause-on-second-failure.</p>
+            </div>
+            <div class="card">
+              <strong>Operator fit</strong>
+              <p>Best for teams that want the UI to feel forceful, legible from a distance, and impossible to ignore.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="logs panel">
+          <div class="block-title">Live logs</div>
+          <div class="logline"><span>16:34:04 / template hit / reward_confirm</span><span>0.94</span></div>
+          <div class="logline"><span>16:34:05 / click packet sent / adapter windows</span><span>ok</span></div>
+          <div class="logline"><span>16:34:07 / panel transition verified</span><span>stable</span></div>
+          <div class="logline"><span>16:34:09 / artifact persisted / frame_041.png</span><span>saved</span></div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

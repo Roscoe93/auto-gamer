@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiet Studio</title>
+    <style>
+      :root {
+        --bg: #f4f0e8;
+        --paper: rgba(255, 255, 255, 0.76);
+        --paper-strong: rgba(255, 255, 255, 0.9);
+        --text: #20332d;
+        --muted: #667c74;
+        --line: rgba(32, 51, 45, 0.12);
+        --accent: #2d6b5d;
+        --accent-soft: #95bbad;
+        --warm: #d79267;
+        --ok: #6f9f85;
+        --warning: #d57a5b;
+        --shadow: 0 24px 60px rgba(44, 55, 48, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        font-family: "Gill Sans", "Trebuchet MS", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(149, 187, 173, 0.26), transparent 22rem),
+          radial-gradient(circle at bottom right, rgba(215, 146, 103, 0.18), transparent 20rem),
+          linear-gradient(180deg, #f8f5ef 0%, #ece6da 100%);
+      }
+
+      .app {
+        min-height: 100vh;
+        padding: 24px;
+        display: grid;
+        grid-template-columns: 310px 1fr 340px;
+        gap: 18px;
+      }
+
+      .panel {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        backdrop-filter: blur(20px);
+        box-shadow: var(--shadow);
+      }
+
+      .left-rail,
+      .right-rail {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+      }
+
+      .hero {
+        padding: 26px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        right: -80px;
+        top: -80px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(149, 187, 173, 0.22), transparent 72%);
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 0.98;
+        font-weight: 500;
+      }
+
+      .hero p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 0.95rem;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .pill,
+      .mini-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.56);
+      }
+
+      .pill {
+        padding: 8px 12px;
+        font-size: 0.78rem;
+      }
+
+      .mini-pill {
+        padding: 6px 10px;
+        font-size: 0.74rem;
+        color: var(--muted);
+      }
+
+      .section {
+        padding: 18px;
+      }
+
+      .section h2 {
+        margin: 0 0 14px;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .session-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .session-stat {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.46);
+        min-width: 0;
+      }
+
+      .session-stat strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.82rem;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .session-stat span {
+        font-size: 1rem;
+        display: block;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .script-group {
+        display: grid;
+        gap: 10px;
+      }
+
+      .script-card {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.52);
+      }
+
+      .script-card.active {
+        border-color: rgba(45, 107, 93, 0.28);
+        background: linear-gradient(180deg, rgba(149, 187, 173, 0.18), rgba(255, 255, 255, 0.58));
+      }
+
+      .script-top,
+      .log-head,
+      .toolbar,
+      .stat-grid,
+      .sub-toolbar,
+      .preview-footer,
+      .status-row,
+      .log-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .script-card strong,
+      .status-card strong,
+      .metric strong,
+      .panel-card strong,
+      .log-item strong,
+      .field label,
+      .history-item strong {
+        display: block;
+        font-weight: 500;
+      }
+
+      .script-meta,
+      .script-card span,
+      .panel-card p,
+      .metric span,
+      .status-card span,
+      .log-item span,
+      .window-meta,
+      .quiet-note,
+      .field input,
+      .field select,
+      .field small,
+      .history-item span {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .script-meta {
+        font-size: 0.86rem;
+        margin-top: 8px;
+      }
+
+      .main {
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 16px;
+      }
+
+      .toolbar {
+        align-items: center;
+        padding: 18px;
+      }
+
+      .toolbar-left {
+        display: grid;
+        gap: 10px;
+      }
+
+      .window-lock {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.6);
+        width: fit-content;
+      }
+
+      .window-lock strong {
+        font-size: 0.92rem;
+      }
+
+      .window-meta {
+        font-size: 0.88rem;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.56);
+        padding: 10px 16px;
+        color: var(--text);
+        font: inherit;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #f7f4ee;
+        border-color: transparent;
+      }
+
+      .warning {
+        color: var(--warning);
+      }
+
+      .stats {
+        padding: 16px 18px;
+      }
+
+      .stat-grid {
+        flex-wrap: wrap;
+      }
+
+      .metric {
+        flex: 1 1 140px;
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .metric strong {
+        font-size: 1.7rem;
+        margin-bottom: 6px;
+      }
+
+      .metric span {
+        font-size: 0.82rem;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+        gap: 16px;
+      }
+
+      .preview-shell {
+        padding: 16px;
+      }
+
+      .sub-toolbar {
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        font-size: 0.8rem;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.52);
+      }
+
+      .tab.active {
+        color: var(--text);
+        border-color: rgba(45, 107, 93, 0.28);
+        background: rgba(149, 187, 173, 0.18);
+      }
+
+      .preview-frame {
+        min-height: 470px;
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(32, 51, 45, 0.08), rgba(32, 51, 45, 0.14)),
+          linear-gradient(140deg, #dfe8e3 0%, #c4d8d0 32%, #9eb8ae 64%, #7d988f 100%);
+      }
+
+      .preview-frame::before,
+      .preview-frame::after,
+      .scan-target {
+        content: "";
+        position: absolute;
+        border-radius: 12px;
+        border: 2px solid rgba(45, 107, 93, 0.72);
+      }
+
+      .preview-frame::before {
+        inset: 62px 56% 58% 34px;
+      }
+
+      .preview-frame::after {
+        inset: 58% 40px 36px 44%;
+        border-color: rgba(215, 146, 103, 0.72);
+      }
+
+      .scan-target {
+        inset: 26% 18% 42% 42%;
+        border-style: dashed;
+        border-color: rgba(255, 255, 255, 0.7);
+      }
+
+      .preview-overlay {
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .preview-chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.38);
+        background: rgba(255, 255, 255, 0.26);
+        backdrop-filter: blur(12px);
+        font-size: 0.78rem;
+      }
+
+      .callout {
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        width: min(240px, calc(100% - 36px));
+        padding: 14px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.74);
+        border: 1px solid rgba(32, 51, 45, 0.1);
+      }
+
+      .callout strong {
+        margin-bottom: 6px;
+      }
+
+      .callout p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 0.88rem;
+      }
+
+      .preview-footer {
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+
+      .panel-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .panel-card {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .panel-card p {
+        margin: 6px 0 0;
+        font-size: 0.9rem;
+      }
+
+      .run-summary {
+        padding: 16px;
+      }
+
+      .status-card {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .status-card strong {
+        margin-bottom: 6px;
+      }
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--ok);
+        box-shadow: 0 0 0 6px rgba(111, 159, 133, 0.12);
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+
+      .status-row {
+        align-items: flex-start;
+      }
+
+      .log-panel {
+        padding: 16px;
+      }
+
+      .log-head {
+        align-items: center;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+
+      .log-toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 240px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.62);
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .search strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .counter {
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        font-size: 0.74rem;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .filter {
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        font-size: 0.74rem;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .filter.active {
+        color: var(--text);
+        background: rgba(149, 187, 173, 0.2);
+      }
+
+      .log-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .action-chip {
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        font-size: 0.74rem;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .log-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .log-item {
+        align-items: flex-start;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .stamp {
+        flex: 0 0 74px;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .log-copy {
+        flex: 1;
+      }
+
+      .log-copy strong {
+        margin-bottom: 4px;
+      }
+
+      .log-copy span {
+        display: block;
+        font-size: 0.85rem;
+      }
+
+      .log-tag {
+        flex: 0 0 auto;
+        padding: 6px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        background: rgba(149, 187, 173, 0.18);
+        color: var(--accent);
+      }
+
+      .log-tag.warn {
+        background: rgba(213, 122, 91, 0.14);
+        color: var(--warning);
+      }
+
+      .selected-note {
+        border-color: rgba(45, 107, 93, 0.2);
+        background: linear-gradient(180deg, rgba(149, 187, 173, 0.14), rgba(255, 255, 255, 0.54));
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .field label {
+        font-size: 0.8rem;
+      }
+
+      .field input,
+      .field select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.78);
+        padding: 10px 12px;
+        font: inherit;
+        color: var(--text);
+      }
+
+      .field small {
+        font-size: 0.78rem;
+      }
+
+      .toggle-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .toggle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .toggle-row:last-child {
+        border-bottom: 0;
+      }
+
+      .toggle-meta strong {
+        margin-bottom: 4px;
+      }
+
+      .toggle {
+        position: relative;
+        width: 48px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(45, 107, 93, 0.22);
+        border: 1px solid rgba(45, 107, 93, 0.12);
+        flex-shrink: 0;
+      }
+
+      .toggle::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 23px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .history-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .history-item {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .history-item strong {
+        margin-bottom: 4px;
+      }
+
+      .history-item span {
+        display: block;
+        font-size: 0.84rem;
+      }
+
+      .asset-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .asset {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.48);
+        padding: 12px;
+      }
+
+      .asset strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      @media (max-width: 1260px) {
+        .app {
+          grid-template-columns: 300px 1fr;
+        }
+
+        .right-rail {
+          grid-column: span 2;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .workspace,
+        .right-rail {
+          grid-template-columns: 1fr;
+        }
+
+        .toolbar,
+        .log-head,
+        .sub-toolbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .controls {
+          justify-content: flex-start;
+        }
+
+        .field-grid,
+        .asset-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 1320px) {
+        .session-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <aside class="left-rail">
+        <section class="panel hero">
+          <p class="eyebrow">Current session</p>
+          <h1>Run 028</h1>
+          <p>Aether Chronicles</p>
+          <div class="pill-row">
+            <div class="pill">Running</div>
+            <div class="pill">Window lock active</div>
+            <div class="pill">Profile synced</div>
+          </div>
+          <div class="session-grid">
+            <div class="session-stat">
+              <strong>Platform</strong>
+              <span>Windows primary</span>
+            </div>
+            <div class="session-stat">
+              <strong>Profile</strong>
+              <span>evening-pass</span>
+            </div>
+            <div class="session-stat">
+              <strong>Window mode</strong>
+              <span>Borderless windowed</span>
+            </div>
+            <div class="session-stat">
+              <strong>Resolution</strong>
+              <span>1728 x 972</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Script library</h2>
+          <div class="script-group">
+            <div class="script-card active">
+              <div class="script-top">
+                <strong>Daily Task</strong>
+                <div class="mini-pill">Selected</div>
+              </div>
+              <div class="script-meta">Stable route / profile: evening-pass / 7m average / OCR fallback light</div>
+            </div>
+            <div class="script-card">
+              <div class="script-top">
+                <strong>Resource Sweep</strong>
+                <div class="mini-pill">Loop</div>
+              </div>
+              <div class="script-meta">Bounded retries / skip cinematic / collect-confirm cycle</div>
+            </div>
+            <div class="script-card">
+              <div class="script-top">
+                <strong>Inbox Claim</strong>
+                <div class="mini-pill">Short</div>
+              </div>
+              <div class="script-meta">Mail panel only / template first / one branch dialog guard</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Profiles and parameters</h2>
+          <div class="script-group">
+            <div class="script-card">
+              <strong>Game profile</strong>
+              <div class="script-meta">Aether Chronicles / 1728 x 972 / borderless-windowed / template pack v3</div>
+            </div>
+            <div class="script-card">
+              <strong>Run settings</strong>
+              <div class="script-meta">Recoveries 2 / settle delay 600ms / pause on unknown branch enabled</div>
+            </div>
+            <div class="script-card">
+              <strong>Hotkeys</strong>
+              <div class="script-meta">F8 pause / F9 resume / F12 emergency stop</div>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="main">
+        <header class="panel toolbar">
+          <div class="toolbar-left">
+            <div class="window-lock">
+              <strong>Aether Chronicles</strong>
+              <span class="mini-pill">Window lock active</span>
+            </div>
+            <div class="window-meta">
+              Standard window / Windows and macOS profile compatible / screenshot permission healthy / input adapter ready
+            </div>
+          </div>
+          <div class="controls">
+            <button class="primary">Start run</button>
+            <button>Pause</button>
+            <button>Resume</button>
+            <button class="warning">Stop</button>
+          </div>
+        </header>
+
+        <section class="panel stats">
+          <div class="stat-grid">
+            <div class="metric">
+              <strong>18m</strong>
+              <span>Elapsed runtime</span>
+            </div>
+            <div class="metric">
+              <strong>42</strong>
+              <span>Input actions</span>
+            </div>
+            <div class="metric">
+              <strong>0.94</strong>
+              <span>Latest match confidence</span>
+            </div>
+            <div class="metric">
+              <strong>2</strong>
+              <span>Recoveries used</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace">
+          <section class="panel preview-shell">
+            <div class="sub-toolbar">
+              <div class="tabs">
+                <div class="tab active">Recognition preview</div>
+                <div class="tab">State graph</div>
+                <div class="tab">Debug overlays</div>
+              </div>
+              <div class="mini-pill">Frame 041 / 16:42:08</div>
+            </div>
+
+            <div class="preview-frame">
+              <div class="scan-target"></div>
+              <div class="preview-overlay">
+                <div class="preview-chip">Template match 0.94</div>
+                <div class="preview-chip">OCR fallback idle</div>
+                <div class="preview-chip">Adapter windows</div>
+              </div>
+              <aside class="callout">
+                <strong>Current match</strong>
+                <p>
+                  Reward confirmation visible in region 03. Next input unlocks in 0.6s.
+                </p>
+              </aside>
+            </div>
+
+            <div class="preview-footer">
+              <div class="pill-row">
+                <div class="mini-pill">State: task_panel.reward_confirm</div>
+                <div class="mini-pill">Window focus stable</div>
+                <div class="mini-pill">Screenshot artifact ready</div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="panel run-summary">
+            <p class="eyebrow">Run detail</p>
+            <div class="panel-stack">
+              <div class="status-card">
+                <div class="status-row">
+                  <div class="status-dot"></div>
+                  <div>
+                    <strong>Current state machine step</strong>
+                    <span>Main menu -> task panel -> reward confirm -> inventory return</span>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-card">
+                <strong>Operator checkpoint</strong>
+                <p>Pause on second failed click. Keep window focus. Save screenshot before state rollback.</p>
+              </div>
+              <div class="panel-card">
+                <strong>Permissions and adapter health</strong>
+                <p>Input control ready. Screenshot access ready. Retina offset normalization enabled.</p>
+              </div>
+              <div class="panel-card">
+                <strong>Selected script parameters</strong>
+                <p>Retry limit 2 / settle delay 0.6s / wait after click 0.8s / save error screenshots enabled.</p>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="panel log-panel">
+          <div class="log-head">
+            <div class="log-toolbar-left">
+              <p class="eyebrow">Live logs</p>
+              <div class="search">Search <strong>task_button</strong></div>
+              <div class="counter">124 entries</div>
+              <div class="counter">Run 028</div>
+            </div>
+            <div class="log-actions">
+              <div class="filters">
+                <div class="filter active">All</div>
+                <div class="filter">Info</div>
+                <div class="filter">Warnings</div>
+                <div class="filter">Errors</div>
+                <div class="filter">Artifacts</div>
+              </div>
+              <div class="action-chip">Auto-scroll</div>
+              <div class="action-chip">Export</div>
+            </div>
+          </div>
+
+          <div class="log-list">
+            <div class="log-item">
+              <div class="stamp">16:42:04</div>
+              <div class="log-copy">
+                <strong>Template task_button matched in region 02</strong>
+                <span>confidence 0.94 / asset task_button_v4 / frame delta steady</span>
+              </div>
+              <div class="log-tag">Info</div>
+            </div>
+            <div class="log-item">
+              <div class="stamp">16:42:05</div>
+              <div class="log-copy">
+                <strong>Click dispatched through platform adapter</strong>
+                <span>x 668 / y 382 / post-click wait 600ms / active window unchanged</span>
+              </div>
+              <div class="log-tag">Action</div>
+            </div>
+            <div class="log-item">
+              <div class="stamp">16:42:08</div>
+              <div class="log-copy">
+                <strong>Reward confirmation surfaced after animation settle</strong>
+                <span>OCR fallback skipped / state promoted to reward_confirm / ready for next input</span>
+              </div>
+              <div class="log-tag">State</div>
+            </div>
+            <div class="log-item">
+              <div class="stamp">16:42:10</div>
+              <div class="log-copy">
+                <strong>Debug artifact persisted for inspection</strong>
+                <span>run_028/frame_041.png / metadata attached / available in run history</span>
+              </div>
+              <div class="log-tag warn">Artifact</div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <aside class="right-rail">
+        <section class="panel section selected-note">
+          <h2>Script parameters</h2>
+          <div class="field-grid">
+            <div class="field">
+              <label>Retry limit</label>
+              <input value="2" />
+            </div>
+            <div class="field">
+              <label>Settle delay</label>
+              <input value="0.6s" />
+            </div>
+            <div class="field">
+              <label>Post-click wait</label>
+              <input value="0.8s" />
+            </div>
+            <div class="field">
+              <label>Confidence threshold</label>
+              <input value="0.90" />
+            </div>
+            <div class="field full">
+              <label>Profile preset</label>
+              <select>
+                <option>evening-pass / 1728 x 972</option>
+              </select>
+              <small>Applied to this run session</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Automation options</h2>
+          <div class="toggle-list">
+            <div class="toggle-row">
+              <div class="toggle-meta">
+                <strong>Pause on unknown branch</strong>
+                <span class="script-meta">Hold session state and surface preview</span>
+              </div>
+              <div class="toggle"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-meta">
+                <strong>Save error screenshots</strong>
+                <span class="script-meta">Persist frame and metadata to run artifacts</span>
+              </div>
+              <div class="toggle"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-meta">
+                <strong>OCR fallback</strong>
+                <span class="script-meta">Use only when template confidence drops</span>
+              </div>
+              <div class="toggle"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Recent runs</h2>
+          <div class="history-list">
+            <div class="history-item">
+              <strong>Run 027</strong>
+              <span>Daily Task / completed / 06m 44s / 0 escalations</span>
+            </div>
+            <div class="history-item">
+              <strong>Run 026</strong>
+              <span>Resource Sweep / paused / dialog branch detected / artifact saved</span>
+            </div>
+            <div class="history-item">
+              <strong>Run 025</strong>
+              <span>Inbox Claim / completed / 02m 18s / OCR fallback used once</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Artifacts</h2>
+          <div class="asset-grid">
+            <div class="asset">
+              <strong>Latest frame</strong>
+              <span>frame_041.png</span>
+            </div>
+            <div class="asset">
+              <strong>Run log</strong>
+              <span>run_028.jsonl</span>
+            </div>
+            <div class="asset">
+              <strong>Error bundle</strong>
+              <span>none</span>
+            </div>
+            <div class="asset">
+              <strong>Template pack</strong>
+              <span>daily-task-v4</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neon Tactical</title>
+    <style>
+      :root {
+        --bg: #041015;
+        --panel: rgba(6, 24, 31, 0.86);
+        --line: rgba(46, 255, 214, 0.22);
+        --text: #defcf5;
+        --muted: #82b9b1;
+        --accent: #2effd6;
+        --accent-2: #f6ff82;
+        --accent-3: #ff7b6c;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family: "Arial Black", Arial, sans-serif;
+        background:
+          radial-gradient(circle at 15% 18%, rgba(46,255,214,0.12), transparent 20rem),
+          radial-gradient(circle at 82% 12%, rgba(246,255,130,0.1), transparent 18rem),
+          linear-gradient(180deg, #041015 0%, #02080b 100%);
+      }
+
+      .frame {
+        min-height: 100vh;
+        padding: 18px;
+        display: grid;
+        grid-template-columns: 260px 1fr 320px;
+        gap: 14px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(46,255,214,0.05), 0 0 32px rgba(46,255,214,0.05);
+      }
+
+      .panel-title {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.7rem;
+        color: var(--muted);
+      }
+
+      .sidebar {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .brand {
+        padding: 18px;
+      }
+
+      .brand h1 {
+        margin: 0;
+        line-height: 0.9;
+        font-size: 2rem;
+        text-transform: uppercase;
+      }
+
+      .brand p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+        font-family: Arial, sans-serif;
+      }
+
+      .item {
+        padding: 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .item:last-child { border-bottom: 0; }
+
+      .item.active {
+        background: linear-gradient(90deg, rgba(46,255,214,0.1), transparent);
+      }
+
+      .item strong {
+        display: block;
+        font-size: 0.92rem;
+        text-transform: uppercase;
+      }
+
+      .item span {
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-family: Arial, sans-serif;
+      }
+
+      .main {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 14px;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+      }
+
+      .window {
+        color: var(--accent-2);
+        font-size: 0.84rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--text);
+        padding: 10px 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.72rem;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #041015;
+        border-color: transparent;
+      }
+
+      .danger {
+        color: var(--accent-3);
+        border-color: rgba(255,123,108,0.38);
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 14px;
+      }
+
+      .preview {
+        position: relative;
+        min-height: 460px;
+        background:
+          linear-gradient(180deg, rgba(2,8,11,0.2), rgba(2,8,11,0.6)),
+          linear-gradient(135deg, #092029 0%, #103443 45%, #071117 100%);
+      }
+
+      .scanline {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 12%);
+        background-size: 100% 18px;
+        opacity: 0.18;
+      }
+
+      .box {
+        position: absolute;
+        border: 1px solid var(--accent);
+        box-shadow: 0 0 18px rgba(46,255,214,0.24);
+      }
+
+      .box.one { inset: 52px 48% 62% 34px; }
+      .box.two { inset: 56% 42px 34px 44%; border-color: var(--accent-2); box-shadow: 0 0 18px rgba(246,255,130,0.24); }
+
+      .overlay {
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        background: rgba(2,8,11,0.8);
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .cards {
+        display: grid;
+        gap: 14px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1rem;
+        text-transform: uppercase;
+      }
+
+      .card p, .log {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .footer {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .logline {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .logline:last-child { border-bottom: 0; }
+
+      .stamp {
+        color: var(--accent);
+        font-size: 0.78rem;
+      }
+
+      .right-rail {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      @media (max-width: 1200px) {
+        .frame { grid-template-columns: 1fr; }
+        .workspace, .footer { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="frame">
+      <aside class="sidebar">
+        <section class="panel">
+          <div class="brand">
+            <div class="panel-title">Prototype 03</div>
+            <h1>Neon<br />Tactical</h1>
+            <p>For operators who want the app to feel like a live command surface, not a quiet admin tool.</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">Script matrix</div>
+          <div class="item active"><strong>Daily Sweep</strong><span>Stable / active route</span></div>
+          <div class="item"><strong>Battle Skip</strong><span>Input timing strict</span></div>
+          <div class="item"><strong>Dialog Resolve</strong><span>OCR branch enabled</span></div>
+        </section>
+      </aside>
+
+      <section class="main">
+        <header class="panel toolbar">
+          <div class="window">Target / Aether Chronicles / frontmost / lock enabled</div>
+          <div class="controls">
+            <button class="primary">Start</button>
+            <button>Pause</button>
+            <button>Resume</button>
+            <button class="danger">Abort</button>
+          </div>
+        </header>
+
+        <section class="workspace">
+          <div class="panel preview">
+            <div class="overlay">Live frame / confidence 94 / adapter win</div>
+            <div class="box one"></div>
+            <div class="box two"></div>
+            <div class="scanline"></div>
+          </div>
+
+          <div class="right-rail">
+            <section class="panel card">
+              <div class="panel-title">State machine</div>
+              <strong>Reward confirm armed</strong>
+              <p>Transition verified. Waiting for final animation settle before dispatching confirm click.</p>
+            </section>
+            <section class="panel card">
+              <div class="panel-title">Telemetry</div>
+              <strong>Input cadence nominal</strong>
+              <p>Average step latency 420ms. No focus loss. No duplicate click signatures in the last 18 actions.</p>
+            </section>
+            <section class="panel card">
+              <div class="panel-title">Safety</div>
+              <strong>Emergency stop hotkey ready</strong>
+              <p>F12 interrupts input immediately and freezes the session for review.</p>
+            </section>
+          </div>
+        </section>
+
+        <section class="footer">
+          <div class="panel">
+            <div class="panel-title">Live logs</div>
+            <div class="logline"><div class="stamp">16:21:05</div><div class="log">Template reward_claim found in region 02 at confidence 0.94.</div></div>
+            <div class="logline"><div class="stamp">16:21:06</div><div class="log">Focus verification succeeded. Sending click packet to adapter.</div></div>
+            <div class="logline"><div class="stamp">16:21:08</div><div class="log">Transition frame delta indicates panel swap complete.</div></div>
+          </div>
+          <div class="panel card">
+            <div class="panel-title">Run summary</div>
+            <strong>Session 028 / 00:18:11 active</strong>
+            <p>42 actions, 2 bounded recoveries, 0 operator escalations, latest artifact saved to run_028/frame_041.png.</p>
+          </div>
+        </section>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-title">Operator notes</div>
+        <div class="item"><strong>Platform</strong><span>Windows primary / macOS compatible style variant</span></div>
+        <div class="item"><strong>Recognition mix</strong><span>Template first / OCR fallback</span></div>
+        <div class="item"><strong>Best fit</strong><span>Teams that want a more game-native command surface</span></div>
+      </aside>
+    </main>
+  </body>
+</html>

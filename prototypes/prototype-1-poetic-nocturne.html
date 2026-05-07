@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nocturne Operator</title>
+    <style>
+      :root {
+        --bg: #10131a;
+        --bg-2: #171c26;
+        --panel: rgba(255, 248, 235, 0.06);
+        --panel-strong: rgba(255, 248, 235, 0.1);
+        --line: rgba(242, 231, 214, 0.14);
+        --text: #f6efe3;
+        --muted: #b9ae9c;
+        --accent: #d7b898;
+        --accent-2: #82a9c9;
+        --danger: #f08771;
+        --ok: #9dc9a7;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(130, 169, 201, 0.12), transparent 22rem),
+          radial-gradient(circle at 80% 0%, rgba(215, 184, 152, 0.1), transparent 18rem),
+          linear-gradient(180deg, #11141c 0%, #0a0d13 100%);
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 280px 1fr 340px;
+        gap: 18px;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        backdrop-filter: blur(20px);
+        border-radius: 8px;
+        padding: 18px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      }
+
+      .sidebar {
+        display: grid;
+        gap: 18px;
+        align-content: start;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .sub {
+        margin: 12px 0 0;
+        color: var(--muted);
+        line-height: 1.65;
+        font-size: 0.95rem;
+      }
+
+      .script-list, .log-list, .metrics {
+        display: grid;
+        gap: 10px;
+      }
+
+      .script {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255,255,255,0.02);
+      }
+
+      .script.active {
+        border-color: rgba(215, 184, 152, 0.44);
+        background: rgba(215, 184, 152, 0.08);
+      }
+
+      .script strong, .log-list strong {
+        display: block;
+        font-weight: 400;
+        font-size: 1rem;
+      }
+
+      .script span, .log-list span, .metric span {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .main {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 18px;
+      }
+
+      .hero {
+        padding: 20px 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+      }
+
+      .hero p {
+        max-width: 44rem;
+        margin: 12px 0 0;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px 16px;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #161311;
+        border-color: transparent;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 18px;
+      }
+
+      .preview {
+        position: relative;
+        min-height: 420px;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.42)),
+          linear-gradient(135deg, #3c4456 0%, #202632 45%, #11151d 100%);
+      }
+
+      .preview::before,
+      .preview::after {
+        content: "";
+        position: absolute;
+        border: 1px solid rgba(215,184,152,0.8);
+        border-radius: 4px;
+      }
+
+      .preview::before {
+        inset: 72px 180px 210px 72px;
+      }
+
+      .preview::after {
+        inset: 248px 86px 82px 260px;
+        border-color: rgba(130,169,201,0.9);
+      }
+
+      .preview-label {
+        position: absolute;
+        left: 22px;
+        bottom: 18px;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        background: rgba(8, 10, 16, 0.68);
+        color: var(--muted);
+        border-radius: 999px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+      }
+
+      .status-grid {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+
+      .status-card {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255,255,255,0.02);
+      }
+
+      .status-card h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+        font-weight: 400;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .metric {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin-bottom: 6px;
+      }
+
+      .log {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .log:last-child {
+        border-bottom: 0;
+      }
+
+      .pill {
+        display: inline-block;
+        margin-bottom: 8px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .ok { background: rgba(157, 201, 167, 0.14); color: var(--ok); }
+      .warn { background: rgba(240, 135, 113, 0.14); color: var(--danger); }
+
+      .footer {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .workspace,
+        .footer {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <aside class="sidebar">
+        <section class="panel">
+          <p class="eyebrow">Prototype 01</p>
+          <h1>Nocturne<br />Operator</h1>
+          <p class="sub">A poetic control room for overnight farming runs, slow confidence checks, and long stretches of operator attention.</p>
+        </section>
+
+        <section class="panel">
+          <p class="eyebrow">Scripts</p>
+          <div class="script-list">
+            <div class="script active"><strong>Daily Task</strong><span>Windowed routine / stable</span></div>
+            <div class="script"><strong>Resource Sweep</strong><span>Looped menu traversal</span></div>
+            <div class="script"><strong>Dialogue Skip</strong><span>OCR-assisted branch</span></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <p class="eyebrow">Profiles</p>
+          <div class="script-list">
+            <div class="script"><strong>Game A / 1440p</strong><span>Window title contains Aether</span></div>
+            <div class="script"><strong>Game A / 1080p</strong><span>Template pack v3</span></div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="main">
+        <header class="panel hero">
+          <div>
+            <p class="eyebrow">Current run</p>
+            <h1 style="font-size:2rem;">Claiming evening rewards before the next sweep.</h1>
+            <p>The interface leans soft and legible, but the operating model stays explicit: active window locked, current state exposed, and stop controls always near the hand.</p>
+          </div>
+          <div class="controls">
+            <button class="btn-primary">Start</button>
+            <button>Pause</button>
+            <button>Resume</button>
+            <button style="border-color:rgba(240,135,113,0.38); color:var(--danger);">Stop</button>
+          </div>
+        </header>
+
+        <div class="workspace">
+          <section class="panel preview">
+            <div class="preview-label">Recognition preview / window locked / 92% confidence</div>
+          </section>
+
+          <aside class="status-grid">
+            <section class="panel">
+              <p class="eyebrow">Run health</p>
+              <div class="metrics">
+                <div class="metric"><strong>18m</strong><span>Active time</span></div>
+                <div class="metric"><strong>42</strong><span>Actions</span></div>
+                <div class="metric"><strong>2</strong><span>Recoveries</span></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="status-card">
+                <span class="pill ok">Running</span>
+                <h3>State machine</h3>
+                <span>Main menu -> task panel -> reward confirm</span>
+              </div>
+              <div class="status-card">
+                <h3>Window</h3>
+                <span>Aether Chronicles [Windowed] / 1728 x 972 / frontmost</span>
+              </div>
+              <div class="status-card">
+                <h3>Permissions</h3>
+                <span>Input control ready / screenshot access healthy</span>
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <div class="footer">
+          <section class="panel">
+            <p class="eyebrow">Live log</p>
+            <div class="log-list">
+              <div class="log"><strong>16:11:03 / task button matched</strong><span>confidence 0.94 / template task_button_v4</span></div>
+              <div class="log"><strong>16:11:05 / click dispatched</strong><span>x 668 / y 382 / adapter windows</span></div>
+              <div class="log"><strong>16:11:08 / reward banner detected</strong><span>ocr fallback used / region 3</span></div>
+              <div class="log"><strong>16:11:10 / operator snapshot persisted</strong><span>artifact run_028/frame_041.png</span></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="eyebrow">Interruption handling</p>
+            <div class="status-card">
+              <span class="pill warn">Recovery note</span>
+              <h3>Unknown dialog branch</h3>
+              <span>If OCR confidence drops below 0.7 twice, move to paused state, keep window focus, and surface the screenshot in the right rail.</span>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <p class="eyebrow">Run journal</p>
+        <div class="log-list">
+          <div class="log"><strong>Moonlit route</strong><span>Estimated completion in 06:32</span></div>
+          <div class="log"><strong>Asset pack</strong><span>daily-task-night-05</span></div>
+          <div class="log"><strong>Hotkeys</strong><span>F8 pause / F9 resume / F12 emergency stop</span></div>
+          <div class="log"><strong>Last exception</strong><span>No unresolved errors in this session</span></div>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>
