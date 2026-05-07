@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4: Preview Pipeline POC</title>
+    <style>
+        :root {
+            --kuroneko-bg: #020208;
+            --kuroneko-panel: #10111F;
+            --kuroneko-text: #FFFFFF;
+            --kuroneko-accent: #4239AE;
+            --overlay-match: #00FF00;
+            --overlay-safe: #00BFFF;
+            --overlay-text: #FFA500; /* 新增 OCR 文本框颜色 (橙色) */
+        }
+
+        body {
+            background-color: var(--kuroneko-bg);
+            color: var(--kuroneko-text);
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 2rem;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: #888;
+            margin-bottom: 2rem;
+        }
+
+        /*
+         * 关键点：响应式等比缩放容器
+         * 使用 resize: both 允许用户拖拽改变大小，以验证 SVG 坐标映射是否准确
+         */
+        .canvas-wrapper {
+            position: relative;
+            width: 800px;
+            max-width: 100%;
+            background-color: var(--kuroneko-panel);
+            border: 2px solid var(--kuroneko-accent);
+            border-radius: 8px;
+            overflow: hidden;
+            resize: both; /* 允许拖动调整大小 */
+        }
+
+        /* 底图占满容器宽度，高度自适应 */
+        .canvas-wrapper img {
+            display: block;
+            width: 100%;
+            height: auto;
+            pointer-events: none;
+        }
+
+        /* SVG 绝对定位，覆盖在图片上。依靠 viewBox 实现坐标缩放 */
+        .canvas-wrapper svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* 识别框样式 */
+        .box-rect {
+            fill: transparent;
+            stroke-width: 2;
+        }
+
+        .box-label-bg {
+            opacity: 0.8;
+        }
+
+        .box-text {
+            fill: #000;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>KuroNeko Studio - Preview Pipeline POC</h2>
+    <p>Try resizing the box from the bottom right corner to verify coordinate mapping.</p>
+
+    <div class="canvas-wrapper">
+        <!-- 图像层 -->
+        <img id="video-stream" alt="Waiting for websocket connection..." />
+
+        <!-- 叠加层：通过 preserveAspectRatio="xMidYMid meet" 保证坐标严格对齐 -->
+        <svg id="overlay-layer" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+    <script>
+        const img = document.getElementById('video-stream');
+        const svg = document.getElementById('overlay-layer');
+        let ws;
+
+        function connect() {
+            ws = new WebSocket('ws://127.0.0.1:8766');
+
+            ws.onopen = () => {
+                console.log('Connected to preview server');
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'preview/frame') {
+                    // 1. 更新底图
+                    img.src = data.image;
+
+                    // 2. 更新 SVG 的 ViewBox 为后端的原始物理分辨率
+                    // 这一步极其关键：它使得后端传过来的 x, y 直接可用，由 SVG 引擎负责响应式缩放
+                    svg.setAttribute('viewBox', `0 0 ${data.originalWidth} ${data.originalHeight}`);
+
+                    // 3. 渲染识别框
+                    renderOverlays(data.overlays);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log('Connection closed. Reconnecting in 2s...');
+                setTimeout(connect, 2000);
+            };
+        }
+
+        function renderOverlays(overlays) {
+            // 清空上一帧的标注
+            svg.innerHTML = '';
+
+            overlays.forEach(overlay => {
+                let color = 'var(--overlay-match)';
+                if (overlay.kind === 'safe_area') color = 'var(--overlay-safe)';
+                if (overlay.kind === 'text') color = 'var(--overlay-text)';
+
+                // 绘制外框
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', overlay.x);
+                rect.setAttribute('y', overlay.y);
+                rect.setAttribute('width', overlay.w);
+                rect.setAttribute('height', overlay.h);
+                rect.setAttribute('class', 'box-rect');
+                rect.setAttribute('stroke', color);
+
+                // 绘制文字背景条
+                const labelText = `${overlay.label} (${(overlay.score * 100).toFixed(0)}%)`;
+                const textWidth = labelText.length * 8.5; // 粗略计算文字宽度
+
+                const labelBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                labelBg.setAttribute('x', overlay.x);
+                labelBg.setAttribute('y', overlay.y - 20); // 放在框上方
+                labelBg.setAttribute('width', textWidth);
+                labelBg.setAttribute('height', 20);
+                labelBg.setAttribute('class', 'box-label-bg');
+                labelBg.setAttribute('fill', color);
+
+                // 绘制文字
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', overlay.x + 4);
+                text.setAttribute('y', overlay.y - 6);
+                text.setAttribute('class', 'box-text');
+                text.textContent = labelText;
+
+                svg.appendChild(rect);
+                svg.appendChild(labelBg);
+                svg.appendChild(text);
+            });
+        }
+
+        // 启动连接
+        connect();
+    </script>
+</body>
+</html>

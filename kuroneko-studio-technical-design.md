@@ -160,7 +160,9 @@ Tauri 壳层
 使用如 `mss` 等高速库进行全屏或多屏捕获，然后基于系统 API 获取的“目标窗口物理边界”对图像进行精确裁剪 (Crop)。必须保证单帧捕获延迟在 `< 50ms`。
 
 **2. 视觉识别与组装层 (Recognition & Overlay)**
-基于 OpenCV 提取特征（如 `matchTemplate`）。识别完成后，并不直接在图像像素上画框，而是生成一份纯文本的 Overlay 元数据（包含分类 `kind`、边界框 `x, y, w, h` 以及置信度 `score`），与原始图像一并打包。
+基于 OpenCV 提取特征（如 `matchTemplate`）以及基于 `RapidOCR` 进行跨平台文本检测。识别完成后，并不直接在图像像素上画框，而是生成一份纯文本的 Overlay 元数据（包含分类 `kind`、边界框 `x, y, w, h` 以及置信度 `score`），与原始图像一并打包。
+
+*注意：OCR 检测是 CPU 密集型任务，如果在全屏范围内扫描会带来巨大的性能开销（可能高达 200-500ms），且会返回海量无关的文本框导致前端渲染卡顿。因此在实际自动化中，OCR 必须限制在预定义的极小 Region（感兴趣区域）内执行。*
 
 **3. 传输与节流层 (Bridge & Throttle)**
 后端的识别循环可能高达 30-60 FPS，但 WebSocket 传输给前端的视觉帧流必须进行强力节流 (Throttle)，强制限制在 `5-10 FPS`。只有状态机的关键节点变化时，才强制推送一帧。
@@ -935,16 +937,20 @@ bridge：
 
 前端：
 
-- 展示最新图像与 overlays
+- 开发 `PreviewCanvas` 组件。
+- 确保底层图像与上层 SVG/DIV 标注框的宽高比严格锁定，不受侧边栏拖拽影响。
+- 实时更新状态推断卡片 (Inference Card)。
 
 后端：
 
-- 写入图像产物
-- 发送图像路径和 overlay 坐标
+- 通过高速库 (如 `mss`) 采集目标窗口画面。
+- 调用 OpenCV 分析画面并生成纯文本坐标的 Overlay 元数据。
+- 将图像与 Overlay 打包成 `PreviewFrame`。
 
 bridge：
 
-- 以受控频率推送预览事件
+- 在 Python 侧实现强力节流 (Throttle)，将发送频率控制在 5~10 FPS 以内。
+- 通过 WebSocket 推送 `PreviewFrame` 事件。
 
 ### 参数编辑
 
