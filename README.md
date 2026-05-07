@@ -1,8 +1,8 @@
-# Quiet Studio 项目说明
+# KuroNeko Studio 项目说明
 
 ## 1. 项目目标
 
-`Quiet Studio` 是一个面向 `Windows + macOS` 的桌面游戏自动化操作台方案，当前聚焦：
+`KuroNeko Studio` 是一个面向 `Windows + macOS` 的桌面游戏自动化操作台方案，当前聚焦：
 
 - 窗口化 / 无边框窗口化桌面游戏
 - 跨平台桌面 UI
@@ -119,8 +119,8 @@ game-auto-cross-platform-solution/
     tests/
   prototypes/
   README.md
-  quiet-studio-technical-design.md
-  quiet-studio-development-tasks.md
+  kuroneko-studio-technical-design.md
+  kuroneko-studio-development-tasks.md
   pnpm-workspace.yaml
 ```
 
@@ -129,8 +129,8 @@ game-auto-cross-platform-solution/
 - `apps/desktop`：桌面前端和 Tauri 壳层
 - `automation-core`：Python 自动化后端
 - `prototypes`：HTML 视觉原型
-- `quiet-studio-technical-design.md`：中文技术设计
-- `quiet-studio-development-tasks.md`：开发任务列表与准出标准
+- `kuroneko-studio-technical-design.md`：中文技术设计
+- `kuroneko-studio-development-tasks.md`：开发任务列表与准出标准
 
 ## 5. 当前完成状态
 
@@ -175,8 +175,8 @@ ws://127.0.0.1:8765
 可通过环境变量覆盖：
 
 ```bash
-QUIET_STUDIO_BRIDGE_HOST=127.0.0.1
-QUIET_STUDIO_BRIDGE_PORT=8765
+KURONEKO_STUDIO_BRIDGE_HOST=127.0.0.1
+KURONEKO_STUDIO_BRIDGE_PORT=8765
 ```
 
 ### 6.2 前端单独启动
@@ -273,17 +273,17 @@ pnpm bundle
 当前 macOS 产物输出到：
 
 ```text
-apps/desktop/src-tauri/target/release/bundle/macos/Quiet Studio.app
+apps/desktop/src-tauri/target/release/bundle/macos/KuroNeko Studio.app
 ```
 
 打包后的进程模型为：
 
 ```text
-双击 Quiet Studio.app
+双击 KuroNeko Studio.app
   -> Tauri 主进程启动
   -> Rust setup 中拉起 bundled Python sidecar
   -> 前端连接本地 WebSocket bridge
-退出 Quiet Studio.app
+退出 KuroNeko Studio.app
   -> window close / app exit 生命周期触发
   -> Rust 回收 sidecar 子进程
 ```
@@ -343,5 +343,5 @@ pnpm install
 
 如果要直接继续开发，推荐优先阅读：
 
-- [quiet-studio-technical-design.md](/Users/bytedance/git/game-auto-cross-platform-solution/quiet-studio-technical-design.md)
-- [quiet-studio-development-tasks.md](/Users/bytedance/git/game-auto-cross-platform-solution/quiet-studio-development-tasks.md)
+- [kuroneko-studio-technical-design.md](/Users/bytedance/git/game-auto-cross-platform-solution/kuroneko-studio-technical-design.md)
+- [kuroneko-studio-development-tasks.md](/Users/bytedance/git/game-auto-cross-platform-solution/kuroneko-studio-development-tasks.md)

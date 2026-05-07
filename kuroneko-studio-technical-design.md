@@ -1,8 +1,8 @@
-# Quiet Studio 技术设计方案
+# KuroNeko Studio 技术设计方案
 
 ## 1. 目标
 
-将 `Quiet Studio` 视觉原型收敛为一份可直接指导开发的桌面产品技术设计，目标范围包括：
+将 `KuroNeko Studio` 视觉原型收敛为一份可直接指导开发的桌面产品技术设计，目标范围包括：
 
 - `Windows + macOS`
 - `窗口化 / 无边框窗口化桌面游戏`
@@ -46,7 +46,7 @@ Tauri 壳层
 
 ## 3. 从原型抽出的产品模块
 
-`Quiet Studio` 当前页面可以拆成 6 个明确产品模块：
+`KuroNeko Studio` 当前页面可以拆成 6 个明确产品模块：
 
 1. 会话头部区
 2. 脚本库和配置摘要区
@@ -553,7 +553,7 @@ Tauri 壳层仍然负责：
 ```json
 {
   "bundle": {
-    "externalBin": ["binaries/quiet-studio-bridge"]
+    "externalBin": ["binaries/kuroneko-studio-bridge"]
   }
 }
 ```
@@ -561,8 +561,8 @@ Tauri 壳层仍然负责：
 注意：
 
 - sidecar 文件名在打包时需要带目标平台 triple 后缀
-- macOS Apple Silicon 例如：`quiet-studio-bridge-aarch64-apple-darwin`
-- Windows 例如：`quiet-studio-bridge-x86_64-pc-windows-msvc.exe`
+- macOS Apple Silicon 例如：`kuroneko-studio-bridge-aarch64-apple-darwin`
+- Windows 例如：`kuroneko-studio-bridge-x86_64-pc-windows-msvc.exe`
 
 ### 7.2.3 Tauri 壳层对 sidecar 的控制职责
 
@@ -1286,7 +1286,7 @@ elif game_id == "another_game":
 
 ## 14. 最终建议
 
-把 `Quiet Studio` 当作明确的产品契约，而不是单纯的视觉风格。
+把 `KuroNeko Studio` 当作明确的产品契约，而不是单纯的视觉风格。
 
 也就是说：
 

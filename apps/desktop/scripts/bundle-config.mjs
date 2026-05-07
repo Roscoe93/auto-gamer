@@ -27,7 +27,7 @@ export function resolveBundlePaths(scriptsDir) {
     nodeBinDir: process.execPath ? path.dirname(process.execPath) : "",
     pnpmCliPath: "/opt/homebrew/lib/node_modules/pnpm/bin/pnpm.cjs",
     pythonBinPath:
-      process.env.QUIET_STUDIO_PYTHON ??
+      process.env.KURONEKO_STUDIO_PYTHON ??
       "/Users/bytedance/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
     cargoBinDir: path.resolve(process.env.HOME ?? "~", ".cargo", "bin")
   };

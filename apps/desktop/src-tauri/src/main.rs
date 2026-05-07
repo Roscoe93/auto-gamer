@@ -13,7 +13,7 @@ fn should_manage_sidecar_with_env(env_value: Option<&str>) -> bool {
 }
 
 fn should_manage_sidecar() -> bool {
-    should_manage_sidecar_with_env(std::env::var("QUIET_STUDIO_MANAGED_SIDECAR").ok().as_deref())
+    should_manage_sidecar_with_env(std::env::var("KURONEKO_STUDIO_MANAGED_SIDECAR").ok().as_deref())
 }
 
 fn stop_sidecar(app: &tauri::AppHandle) {
@@ -34,7 +34,7 @@ fn main() {
         .manage(BridgeSidecarState(Mutex::new(None)))
         .setup(|app| {
             if should_manage_sidecar() {
-                let sidecar = app.shell().sidecar("quiet-studio-bridge")?;
+                let sidecar = app.shell().sidecar("kuroneko-studio-bridge")?;
                 let (_rx, child) = sidecar.spawn()?;
 
                 let state = app.state::<BridgeSidecarState>();
@@ -53,7 +53,7 @@ fn main() {
             }
         })
         .build(tauri::generate_context!())
-        .expect("error while building Quiet Studio")
+        .expect("error while building KuroNeko Studio")
         .run(|app, event| {
             if let tauri::RunEvent::Exit = event {
                 stop_sidecar(app);

@@ -1,13 +1,13 @@
-# Quiet Studio 开发任务列表与准出标准
+# KuroNeko Studio 开发任务列表与准出标准
 
 > **适用范围：** Windows + macOS 桌面游戏自动化操作台  
 > **对应文档：**
-> - [技术设计方案](/Users/bytedance/git/game-auto-cross-platform-solution/quiet-studio-technical-design.md)
+> - [技术设计方案](/Users/bytedance/git/game-auto-cross-platform-solution/kuroneko-studio-technical-design.md)
 > - [视觉原型](/Users/bytedance/git/game-auto-cross-platform-solution/prototypes/prototype-4-organic-studio.html)
 
 ## 1. 目标
 
-把 `Quiet Studio` 从视觉原型推进到可运行的第一版桌面产品。  
+把 `KuroNeko Studio` 从视觉原型推进到可运行的第一版桌面产品。  
 任务列表按“前端 / 后端 / bridge / 集成”拆分，并为每个阶段定义准出标准，便于排期、分工和验收。
 
 ## 2. 总体分期

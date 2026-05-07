@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Quiet Studio desktop default capability.",
+  "description": "KuroNeko Studio desktop default capability.",
   "windows": ["main"],
   "permissions": [
     "core:default",
@@ -10,7 +10,7 @@
       "identifier": "shell:allow-execute",
       "allow": [
         {
-          "name": "quiet-studio-bridge",
+          "name": "kuroneko-studio-bridge",
           "sidecar": true
         }
       ]

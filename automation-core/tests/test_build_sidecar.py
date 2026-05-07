@@ -17,14 +17,14 @@ class BuildSidecarTests(unittest.TestCase):
 
     def test_output_binary_name_for_macos(self) -> None:
         self.assertEqual(
-            output_binary_name("quiet-studio-bridge", "aarch64-apple-darwin"),
-            "quiet-studio-bridge-aarch64-apple-darwin",
+            output_binary_name("kuroneko-studio-bridge", "aarch64-apple-darwin"),
+            "kuroneko-studio-bridge-aarch64-apple-darwin",
         )
 
     def test_output_binary_name_for_windows(self) -> None:
         self.assertEqual(
-            output_binary_name("quiet-studio-bridge", "x86_64-pc-windows-msvc"),
-            "quiet-studio-bridge-x86_64-pc-windows-msvc.exe",
+            output_binary_name("kuroneko-studio-bridge", "x86_64-pc-windows-msvc"),
+            "kuroneko-studio-bridge-x86_64-pc-windows-msvc.exe",
         )
 
 

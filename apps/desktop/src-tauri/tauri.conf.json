@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Quiet Studio",
+  "productName": "KuroNeko Studio",
   "version": "0.1.0",
-  "identifier": "com.quietstudio.desktop",
+  "identifier": "com.kuronekostudio.desktop",
   "build": {
     "beforeDevCommand": "",
     "frontendDist": "../dist",
@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "Quiet Studio",
+        "title": "KuroNeko Studio",
         "width": 1440,
         "height": 960,
         "resizable": true
@@ -21,6 +21,6 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "externalBin": ["binaries/quiet-studio-bridge"]
+    "externalBin": ["binaries/kuroneko-studio-bridge"]
   }
 }

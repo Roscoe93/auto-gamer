@@ -128,6 +128,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error("[quiet-studio] dev bootstrap failed:", error);
+  console.error("[kuroneko-studio] dev bootstrap failed:", error);
   stopAll(1);
 });

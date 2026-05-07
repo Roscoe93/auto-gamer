@@ -7,11 +7,11 @@ from app.api.websocket_server import BridgeWebSocketServer
 
 
 async def run() -> None:
-    host = os.getenv("QUIET_STUDIO_BRIDGE_HOST", "127.0.0.1")
-    port = int(os.getenv("QUIET_STUDIO_BRIDGE_PORT", "8765"))
+    host = os.getenv("KURONEKO_STUDIO_BRIDGE_HOST", "127.0.0.1")
+    port = int(os.getenv("KURONEKO_STUDIO_BRIDGE_PORT", "8765"))
     server = BridgeWebSocketServer(host=host, port=port)
     await server.start()
-    print(f"Quiet Studio bridge listening on ws://{host}:{server.port}")
+    print(f"KuroNeko Studio bridge listening on ws://{host}:{server.port}")
 
     stop_event = asyncio.Event()
     try:

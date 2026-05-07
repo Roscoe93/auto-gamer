@@ -69,8 +69,8 @@ def build_sidecar(base_name: str, python_executable: str) -> Path:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build Quiet Studio Python bridge sidecar.")
-    parser.add_argument("--name", default="quiet-studio-bridge")
+    parser = argparse.ArgumentParser(description="Build KuroNeko Studio Python bridge sidecar.")
+    parser.add_argument("--name", default="kuroneko-studio-bridge")
     parser.add_argument("--python", default=sys.executable)
     args = parser.parse_args()
 

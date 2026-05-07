@@ -51,7 +51,7 @@ export function App() {
     <main className="page">
       <section className="panel">
         <p className="eyebrow">阶段 1 骨架</p>
-        <h1>Quiet Studio Desktop</h1>
+        <h1>KuroNeko Studio Desktop</h1>
         <p className="subtitle">Tauri 壳层 + React 前端 + Python bridge 服务</p>
       </section>
 

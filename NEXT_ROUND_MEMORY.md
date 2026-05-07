@@ -2,11 +2,11 @@
 
 ## 1. 当前目标背景
 
-项目是 `Quiet Studio`，一个 `Windows + macOS` 的桌面游戏自动化操作台。
+项目是 `KuroNeko Studio`，一个 `Windows + macOS` 的桌面游戏自动化操作台。
 
 当前方向已经明确：
 
-- UI 采用 `Quiet Studio` 视觉方向
+- UI 采用 `KuroNeko Studio` 视觉方向
 - 架构采用 `Tauri + React + TypeScript + Python bridge`
 - 通信采用本地 `WebSocket`
 - 后端扩展性通过 `GameAdapter + FlowScript + helpers + profile/templates`
@@ -16,8 +16,8 @@
 已存在并已更新的文档：
 
 - [README.md](/Users/bytedance/git/game-auto-cross-platform-solution/README.md)
-- [quiet-studio-technical-design.md](/Users/bytedance/git/game-auto-cross-platform-solution/quiet-studio-technical-design.md)
-- [quiet-studio-development-tasks.md](/Users/bytedance/git/game-auto-cross-platform-solution/quiet-studio-development-tasks.md)
+- [kuroneko-studio-technical-design.md](/Users/bytedance/git/game-auto-cross-platform-solution/kuroneko-studio-technical-design.md)
+- [kuroneko-studio-development-tasks.md](/Users/bytedance/git/game-auto-cross-platform-solution/kuroneko-studio-development-tasks.md)
 
 本轮已额外补充：
 
@@ -111,8 +111,8 @@
 
 本轮也做了 bundle 生命周期实测：
 
-1. 启动 `/Users/bytedance/git/game-auto-cross-platform-solution/apps/desktop/src-tauri/target/release/bundle/macos/Quiet Studio.app`
-2. 确认主进程 `quiet_studio_desktop` 和 sidecar `quiet-studio-bridge` 同时启动
+1. 启动 `/Users/bytedance/git/game-auto-cross-platform-solution/apps/desktop/src-tauri/target/release/bundle/macos/KuroNeko Studio.app`
+2. 确认主进程 `kuroneko_studio_desktop` 和 sidecar `kuroneko-studio-bridge` 同时启动
 3. 退出应用
 4. 确认主进程和 sidecar 均已退出，无残留进程
 
@@ -153,7 +153,7 @@
 - `apps/desktop/src-tauri/Cargo.toml`
 - `apps/desktop/src-tauri/src/main.rs`
 - `apps/desktop/src-tauri/capabilities/default.json`
-- `apps/desktop/src-tauri/binaries/quiet-studio-bridge-aarch64-apple-darwin`
+- `apps/desktop/src-tauri/binaries/kuroneko-studio-bridge-aarch64-apple-darwin`
 - `scripts/build_sidecar.py`
 - `apps/desktop/scripts/bundle.mjs`
 - `apps/desktop/scripts/bundle-config.mjs`
@@ -169,5 +169,5 @@
 - `apps/desktop/src/services/bridge-client.ts`
 - `automation-core/app/core/session_service.py`
 - `automation-core/app/api/websocket_server.py`
-- `quiet-studio-technical-design.md`
-- `quiet-studio-development-tasks.md`
+- `kuroneko-studio-technical-design.md`
+- `kuroneko-studio-development-tasks.md`
