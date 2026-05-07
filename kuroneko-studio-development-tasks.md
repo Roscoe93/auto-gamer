@@ -121,18 +121,31 @@
 
 ### 阶段 4：识别预览与日志控制台
 
-**目标：** 把视觉识别过程（“看”）和运行日志以操作台方式完整展示出来。
+**目标：** 把视觉识别过程（“看”）和运行日志以操作台方式完整展示出来。此阶段按“截图 -> 识别 -> 传输 -> 展示”的链路细分为 5 个子步骤。
 
 **任务列表：**
 
-- 定义前端 `PreviewCanvas` 结构与 Overlay 数据模型
-- 实现截图采集与帧流推送节流机制
-- 实现基于图片的 Bounding Box 标注层渲染（支持置信度展示）
-- 实现状态推断卡片 (展示 Current Inference & Next Action)
-- 实现结构化日志模型 (带 `event_type` 和关联 run)
-- 实现日志事件 WebSocket 推送
-- 实现前端日志控制台：按级别、事件类型过滤与自动滚动
-- 支持日志项点击联动（关联至特定帧产物）
+**4.1 截图采集层 (Capture)**
+- 评估并接入跨平台高速截图方案（如 `mss` 或 macOS Quartz / Windows BitBlt），确保单帧捕获耗时 < 50ms。
+- 实现基于目标窗口句柄的相对区域裁剪，剔除无用的桌面背景。
+
+**4.2 视觉识别与组装层 (Recognition & Overlay)**
+- 接入 OpenCV，实现基础的 `matchTemplate`（模板匹配）。
+- 提取匹配结果，生成结构化的 Overlay 元数据：包含坐标 `(x, y, w, h)`、标签名和置信度 (Score)。
+
+**4.3 传输与节流层 (Bridge & Throttle)**
+- 定义 `PreviewFrame` 数据协议，打包图像流（本地文件路径 / Base64）与 Overlay 数据。
+- 实现 WebSocket 帧率节流 (Throttle)：控制预览推送最高不超过 5~10 FPS，避免高频 I/O 拖死 UI 渲染线程。
+
+**4.4 前端预览渲染层 (Preview UI)**
+- 开发 `PreviewCanvas` 组件：使用 `<img>` 配合绝对定位的 SVG/DIV 层渲染识别框。
+- 实现画布自适应缩放 (Aspect Ratio Preserved)，保证无论侧边栏如何拖拽，识别框与图像比例严格对齐。
+
+**4.5 状态推断与日志台 (Inference & Logs)**
+- 实现状态推断卡片 (展示 Current Inference & Next Action)。
+- 实现结构化日志模型 (带 `event_type` 和关联 run)，并通过 WebSocket 实时推送。
+- 实现前端日志控制台：按级别、事件类型过滤与自动滚动。
+- 支持日志项点击联动（如点击某条 error 日志，弹出当时关联的错误截帧）。
 
 **涉及模块：**
 
