@@ -15,6 +15,7 @@ type BridgeEvent =
   | { type: "connection/status"; payload: { state: string } }
   | { type: "connection/heartbeat"; payload: { ts: string } }
   | { type: "session/updated"; payload: SessionSummary }
+  | { type: "session/windows-listed"; payload: Array<{ id: string; title: string }> }
   | { type: "error"; payload: { code: string; message: string } };
 
 type BridgeListener = (event: BridgeEvent) => void;
@@ -53,5 +54,16 @@ export class BridgeClient {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
     }
+  }
+
+  listWindows(): void {
+    this.send({ type: "session/list-windows" });
+  }
+
+  selectWindow(windowId: string, windowTitle: string): void {
+    this.send({
+      type: "session/select-window",
+      payload: { windowId, windowTitle }
+    });
   }
 }

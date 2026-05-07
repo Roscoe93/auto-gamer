@@ -8,6 +8,7 @@ from typing import Any
 from websockets.asyncio.server import ServerConnection, serve
 
 from app.core.session_service import SessionService
+from app.windows.window_service import WindowService
 
 
 class BridgeWebSocketServer:
@@ -16,6 +17,7 @@ class BridgeWebSocketServer:
         self.port = port
         self.heartbeat_interval = heartbeat_interval
         self._session_service = SessionService()
+        self._window_service = WindowService()
         self._server = None
 
     async def start(self) -> None:
@@ -49,6 +51,31 @@ class BridgeWebSocketServer:
         message_type = message.get("type")
 
         if message_type == "session/get":
+            await connection.send(
+                json.dumps(
+                    {
+                        "type": "session/updated",
+                        "payload": self._session_service.get_summary().to_payload(),
+                    }
+                )
+            )
+            return
+
+        if message_type == "session/list-windows":
+            windows = self._window_service.list_windows()
+            await connection.send(
+                json.dumps(
+                    {
+                        "type": "session/windows-listed",
+                        "payload": [{"id": w.id, "title": w.title} for w in windows],
+                    }
+                )
+            )
+            return
+
+        if message_type == "session/select-window":
+            payload = message.get("payload", {})
+            self._session_service.update_window(payload.get("windowId"), payload.get("windowTitle"))
             await connection.send(
                 json.dumps(
                     {

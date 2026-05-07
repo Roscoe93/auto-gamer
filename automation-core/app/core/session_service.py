@@ -24,3 +24,7 @@ class SessionService:
 
     def get_summary(self) -> SessionSummary:
         return self._summary
+
+    def update_window(self, window_id: str | None, window_title: str | None) -> None:
+        self._summary.windowId = window_id
+        self._summary.windowTitle = window_title

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-
 import { BridgeClient, ConnectionState, SessionSummary } from "./services/bridge-client";
+import { Page, Panel, Card } from "./components/layout/Layout";
+import { WindowSelector } from "./components/controls/WindowSelector";
 
 const defaultSession: SessionSummary = {
   runId: null,
@@ -24,6 +25,10 @@ export function App() {
     const unsubscribe = client.subscribe((event) => {
       if (event.type === "connection/status") {
         setConnectionState(event.payload.state === "connected" ? "connected" : "offline");
+        // When connected, fetch initial window list
+        if (event.payload.state === "connected") {
+          client.listWindows();
+        }
       }
 
       if (event.type === "connection/heartbeat") {
@@ -48,39 +53,41 @@ export function App() {
   }, [client]);
 
   return (
-    <main className="page">
-      <section className="panel">
-        <p className="eyebrow">阶段 1 骨架</p>
+    <Page>
+      <Panel>
+        <p className="eyebrow">阶段 2: Session 与运行控制</p>
         <h1>KuroNeko Studio</h1>
         <p className="subtitle">Tauri 壳层 + React 前端 + Python bridge 服务</p>
-      </section>
+      </Panel>
 
       <section className="grid">
-        <article className="card">
+        <Card>
           <h2>连接状态</h2>
           <strong className={`status ${connectionState}`}>{connectionState}</strong>
           <p>最近心跳：{heartbeatTs ?? "暂无"}</p>
-        </article>
+        </Card>
 
-        <article className="card">
+        <Card>
           <h2>当前 Session</h2>
           <p>runId：{session.runId ?? "未启动"}</p>
           <p>status：{session.status}</p>
           <p>platform：{session.platform}</p>
-        </article>
+        </Card>
 
-        <article className="card">
-          <h2>窗口与 Profile</h2>
-          <p>window：{session.windowTitle ?? "未选择"}</p>
-          <p>mode：{session.windowMode ?? "未设置"}</p>
-          <p>profile：{session.profileName ?? "未设置"}</p>
-        </article>
+        <Card>
+          <h2>目标窗口</h2>
+          <div style={{ marginBottom: "16px" }}>
+            <WindowSelector client={client} currentWindowId={session.windowId} />
+          </div>
+          <p>当前：{session.windowTitle ?? "未选择"}</p>
+          <p>模式：{session.windowMode ?? "未设置"}</p>
+        </Card>
       </section>
 
-      <section className="panel">
+      <Panel>
         <h2>Bridge 健康</h2>
         <p>{lastError ?? "未收到错误事件"}</p>
-      </section>
-    </main>
+      </Panel>
+    </Page>
   );
 }
