@@ -210,7 +210,25 @@ Tauri 壳层
 
 ## 5. 前端设计
 
-### 5.1 前端职责
+### 5.1 主题与视觉规范
+
+前端 UI 统一使用基于黑猫与科技元素提取的主题色调，确保视觉体验的沉浸感与专业感：
+
+**核心调色板 (CSS Variables)**：
+- **极暗渊黑 (Base Dark)**：`--kuroneko-bg-base: #020208`，作为应用的最底层背景。
+- **深蓝灰 (Panel/Card)**：`--kuroneko-bg-panel: #10111F`，作为面板和卡片的主背景。
+- **主文本色 (Primary Text)**：`--kuroneko-text-primary: #FFFFFF`，高对比度纯白。
+- **次文本色 (Secondary Text)**：`--kuroneko-text-secondary: #B4B8F0`，带有蓝紫倾向的亮灰色。
+- **科技紫 (Accent)**：`--kuroneko-accent: #4239AE`，主强调色。
+- **霓虹蓝 (Accent Glow)**：`--kuroneko-accent-glow: #CCFFFF`，高亮、连接态、Hover 等特效。
+- **猫垫粉 (Kawaii Pink)**：`--kuroneko-kawaii-pink: #E995FF`，作为警告、过渡态（如 connecting）及特殊强调色的点缀。
+
+**高级质感与渐变**：
+- **毛玻璃效果 (Glassmorphism)**：卡片和面板需叠加 `backdrop-filter: blur(10px)`。
+- **全局渐变光晕**：`--kuroneko-gradient-glow` 配合 `radial-gradient` 为悬停卡片提供放射状的呼吸光晕。
+- **科技感渐变**：`--kuroneko-gradient-primary` 等线性渐变应用于标题发光、边框特效及装饰线条。
+
+### 5.2 前端职责
 
 前端负责：
 
