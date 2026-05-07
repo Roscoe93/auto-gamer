@@ -3,13 +3,19 @@ from __future__ import annotations
 import asyncio
 import json
 from datetime import datetime, timezone
-from typing import Any
 
 from websockets.asyncio.server import ServerConnection, serve
 
 from app.core.session_service import SessionService
 from app.core.run_controller import RunController
 from app.windows.window_service import WindowService
+from app.scripts.registry import ScriptRegistry
+from app.scripts.profile_manager import ProfileManager
+
+from app.api.message_router import MessageRouter
+from app.api.handlers.session_handler import create_session_router
+from app.api.handlers.run_handler import create_run_router
+from app.api.handlers.script_handler import create_script_router
 
 
 class BridgeWebSocketServer:
@@ -17,9 +23,20 @@ class BridgeWebSocketServer:
         self.host = host
         self.port = port
         self.heartbeat_interval = heartbeat_interval
+
+        # Initialize Core Services
         self._session_service = SessionService()
         self._window_service = WindowService()
         self._run_controller = RunController(self._session_service, self._on_state_changed)
+        self._script_registry = ScriptRegistry()
+        self._profile_manager = ProfileManager()
+
+        # Setup Router
+        self._router = MessageRouter()
+        self._router.include_router(create_session_router(self._session_service, self._window_service, self._on_state_changed))
+        self._router.include_router(create_run_router(self._run_controller))
+        self._router.include_router(create_script_router(self._script_registry, self._profile_manager))
+
         self._server = None
         self._active_connections: set[ServerConnection] = set()
 
@@ -63,74 +80,16 @@ class BridgeWebSocketServer:
                 await heartbeat_task
 
     async def _handle_message(self, connection: ServerConnection, raw_message: str) -> None:
-        message = json.loads(raw_message)
-        message_type = message.get("type")
-
-        if message_type == "session/get":
-            await connection.send(
-                json.dumps(
-                    {
-                        "type": "session/updated",
-                        "payload": self._session_service.get_summary().to_payload(),
-                    }
-                )
-            )
-            return
-
-        if message_type == "session/list-windows":
-            windows = self._window_service.list_windows()
-            await connection.send(
-                json.dumps(
-                    {
-                        "type": "session/windows-listed",
-                        "payload": [{"id": w.id, "title": w.title} for w in windows],
-                    }
-                )
-            )
-            return
-
-        if message_type == "session/select-window":
-            payload = message.get("payload", {})
-            self._session_service.update_window(payload.get("windowId"), payload.get("windowTitle"))
-            self._on_state_changed()
-            return
-
-        if message_type == "run/start":
-            try:
-                self._run_controller.start()
-            except ValueError as e:
-                await connection.send(json.dumps({"type": "error", "payload": {"code": "START_FAILED", "message": str(e)}}))
-            return
-
-        if message_type == "run/pause":
-            try:
-                self._run_controller.pause()
-            except ValueError as e:
-                await connection.send(json.dumps({"type": "error", "payload": {"code": "PAUSE_FAILED", "message": str(e)}}))
-            return
-
-        if message_type == "run/resume":
-            try:
-                self._run_controller.resume()
-            except ValueError as e:
-                await connection.send(json.dumps({"type": "error", "payload": {"code": "RESUME_FAILED", "message": str(e)}}))
-            return
-
-        if message_type == "run/stop":
-            self._run_controller.stop()
-            return
-
-        await connection.send(
-            json.dumps(
-                {
-                    "type": "error",
-                    "payload": {
-                        "code": "UNKNOWN_COMMAND",
-                        "message": f"Unsupported command: {message_type}",
-                    },
-                }
-            )
-        )
+        try:
+            message = json.loads(raw_message)
+            # Delegate to the router
+            await self._router.dispatch(connection, message)
+        except json.JSONDecodeError:
+            await connection.send(json.dumps({"type": "error", "payload": {"code": "INVALID_JSON", "message": "Failed to parse JSON message"}}))
+        except Exception as e:
+            # Catch unexpected errors to prevent the connection from crashing silently
+            print(f"Error handling message: {e}")
+            await connection.send(json.dumps({"type": "error", "payload": {"code": "INTERNAL_ERROR", "message": str(e)}}))
 
     async def _heartbeat_loop(self, connection: ServerConnection) -> None:
         while True:

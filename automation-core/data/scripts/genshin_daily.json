@@ -1,0 +1,43 @@
+{
+  "id": "genshin_daily",
+  "name": "原神日常自动化",
+  "version": "1.0.0",
+  "description": "包含每日委托、探索派遣、体力树脂消耗等全套流程",
+  "author": "KuroNeko",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "do_commissions": {
+        "type": "boolean",
+        "title": "执行每日委托",
+        "default": true
+      },
+      "do_expeditions": {
+        "type": "boolean",
+        "title": "重新派遣探索",
+        "default": true
+      },
+      "resin_usage": {
+        "type": "string",
+        "title": "树脂消耗策略",
+        "enum": ["none", "condensed", "domain"],
+        "enumNames": ["不消耗", "合成浓缩树脂", "刷秘境"],
+        "default": "condensed"
+      },
+      "domain_name": {
+        "type": "string",
+        "title": "目标秘境名称",
+        "description": "仅在树脂消耗策略为“刷秘境”时有效",
+        "default": ""
+      },
+      "run_times": {
+        "type": "integer",
+        "title": "运行次数",
+        "minimum": 1,
+        "maximum": 5,
+        "default": 1
+      }
+    },
+    "required": ["do_commissions", "do_expeditions", "resin_usage"]
+  }
+}

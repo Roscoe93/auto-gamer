@@ -1,0 +1,30 @@
+{
+  "id": "zzz_daily",
+  "name": "绝区零日常",
+  "version": "1.0.0",
+  "description": "拉面店、刮刮卡、录像店营业、清体力",
+  "author": "KuroNeko",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "do_store": {
+        "type": "boolean",
+        "title": "录像店营业",
+        "default": true
+      },
+      "do_scratch": {
+        "type": "boolean",
+        "title": "买刮刮卡",
+        "default": true
+      },
+      "stamina_usage": {
+        "type": "string",
+        "title": "电量消耗",
+        "enum": ["none", "hvr", "material"],
+        "enumNames": ["不消耗", "HVR", "刷材料"],
+        "default": "hvr"
+      }
+    },
+    "required": ["do_store", "do_scratch", "stamina_usage"]
+  }
+}

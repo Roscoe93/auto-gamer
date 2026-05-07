@@ -661,6 +661,8 @@ Tauri app setup
 { "type": "scripts/list" }
 { "type": "scripts/select", "scriptId": "daily_task" }
 { "type": "profiles/list", "scriptId": "daily_task" }
+{ "type": "profiles/save", "payload": { "id": "...", "scriptId": "...", "name": "...", "parameters": {} } }
+{ "type": "profiles/delete", "payload": { "id": "..." } }
 { "type": "session/select-window", "windowId": "win_123" }
 { "type": "session/update-params", "params": { "retryLimit": 2 } }
 { "type": "run/start" }
@@ -685,6 +687,36 @@ Tauri app setup
     "profileId": "evening-pass",
     "windowTitle": "Aether Chronicles"
   }
+}
+```
+
+```json
+{
+  "type": "scripts/listed",
+  "payload": [
+    {
+      "id": "genshin_daily",
+      "name": "原神日常自动化",
+      "version": "1.0.0",
+      "description": "...",
+      "author": "KuroNeko",
+      "schema": { ... }
+    }
+  ]
+}
+```
+
+```json
+{
+  "type": "profiles/listed",
+  "payload": [
+    {
+      "id": "12345",
+      "scriptId": "genshin_daily",
+      "name": "配置 12:00:00",
+      "parameters": { ... }
+    }
+  ]
 }
 ```
 
