@@ -375,7 +375,7 @@ ArtifactsPanel
 - 低风险配置编辑可做轻量 optimistic UI，run 状态不要做乐观更新
 - 参数表单优先走 schema 驱动
 
-## 6. 后端设计
+## 6. 后端架构设计
 
 ### 6.1 后端职责
 
@@ -400,7 +400,34 @@ ArtifactsPanel
 - 预览元数据
 - 产物记录
 
-### 6.2 后端目录建议
+### 6.2 语言与框架
+- **Python 3.10+** (利用 asyncio)
+- **websockets** 库提供通信能力
+- **pydantic** 提供强类型数据校验
+
+### 6.3 跨平台 OS 适配器设计 (OS Adapter Pattern)
+由于 Windows 和 macOS 在窗口管理、进程枚举和硬件输入注入上的底层 API 完全不同，如果将系统判断（`if sys.platform == 'darwin'`）散落在业务代码各处，会导致代码迅速劣化。
+
+**设计方案：抽象工厂与策略模式**
+在 `automation-core/app/os_adapter/` 下定义统一的抽象基类 (Abstract Base Class)，将操作系统差异完全隔离：
+
+1. **`OSWindowAdapter` 接口**：
+   - `list_windows() -> list[Window]`：枚举可见窗口。
+   - `get_window_rect(window_id: str) -> WindowRect`：获取窗口的物理像素坐标与尺寸。
+   - `bring_to_front(window_id: str) -> bool`：强制将窗口拉至操作系统最前台。
+
+2. **`OSInputAdapter` 接口 (Phase 5 预留)**：
+   - `mouse_click(x: int, y: int)`：发送硬件级鼠标点击。
+   - `keyboard_press(key: str)`：发送硬件级键盘按键。
+
+**平台具体实现：**
+- **Windows 实现 (`Win32Adapter`)**：底层封装 `ctypes`，调用 `user32.dll` 中的 `EnumWindows`, `GetWindowRect`, `SetForegroundWindow`, `SendInput` 等系统原生 API。
+- **macOS 实现 (`MacAdapter`)**：底层封装 `osascript` (AppleScript / System Events) 或引入 `pyobjc` 调用 `CoreGraphics` (Quartz) 实现坐标获取与 `CGEventPost` 注入。
+
+**运行时注入：**
+系统启动时，由一个工厂函数根据 `sys.platform` 实例化对应的具体 Adapter，并通过依赖注入传递给上层的 `WindowService` 和后续的 `InputService`。上层业务代码**绝对不允许**直接调用 `ctypes` 或感知当前操作系统。
+
+### 6.4 后端目录建议
 
 ```text
 automation-core/
@@ -1013,8 +1040,9 @@ data/
 - 查找窗口与分辨率坐标归一化
 - macOS Quartz / Windows SendInput 硬件级输入注入
 - 拟人化延迟抖动与高斯随机偏移
-- 截图与区域裁剪
-- 模板匹配与 OCR
+- 截图与基于 Region 的区域裁剪 (极大降低识别开销)
+- 模板匹配
+- 基于 ONNX 的跨平台 OCR (结合模糊匹配容错，如 Levenshtein Distance)
 - 全局安全热键监听 (Kill Switch)
 
 这一层解决的是“系统层面怎么看、怎么安全地动”。
