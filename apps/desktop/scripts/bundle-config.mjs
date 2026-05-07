@@ -34,27 +34,30 @@ export function resolveBundlePaths(scriptsDir) {
 }
 
 export function buildBundleSteps(paths) {
+  const env = { ...process.env };
+  delete env.CI;
+
   return [
     {
       name: "sidecar",
       command: paths.pythonBinPath,
       args: [paths.sidecarBuildScript, "--python", paths.pythonBinPath],
       cwd: paths.repoRoot,
-      env: { ...process.env }
+      env: env
     },
     {
       name: "frontend",
       command: paths.nodeBinDir ? path.join(paths.nodeBinDir, "node") : "node",
       args: [paths.pnpmCliPath, "build"],
       cwd: paths.desktopRoot,
-      env: withPathEnv(process.env, paths.nodeBinDir)
+      env: withPathEnv(env, paths.nodeBinDir)
     },
     {
       name: "tauri-bundle",
-      command: "cargo",
-      args: ["tauri", "build", "--bundles", "app"],
-      cwd: paths.tauriRoot,
-      env: withPathEnv(process.env, paths.cargoBinDir)
+      command: paths.nodeBinDir ? path.join(paths.nodeBinDir, "node") : "node",
+      args: [paths.pnpmCliPath, "tauri", "build", "--bundles", "app"],
+      cwd: paths.desktopRoot,
+      env: withPathEnv(env, paths.nodeBinDir)
     }
   ];
 }
