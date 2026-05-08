@@ -141,6 +141,7 @@
 **4.4 前端预览渲染层 (Preview UI)**
 - [x] 开发 `PreviewCanvas` 组件：使用 `<img>` 配合绝对定位的 SVG/DIV 层渲染识别框。
 - [x] 实现画布自适应缩放 (Aspect Ratio Preserved)，保证无论侧边栏如何拖拽，识别框与图像比例严格对齐。
+- [x] 实现预览全屏展示功能，使用 React Portal 绕过 CSS 层叠上下文限制。
 
 **4.5 状态推断与日志台 (Inference & Logs)**
 - [ ] 实现状态推断卡片 (展示 Current Inference & Next Action)。
