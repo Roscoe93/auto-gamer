@@ -3,13 +3,97 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+  color: var(--kuroneko-text-secondary, #d4d4d8);
+}
+
+.log-console-header {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.log-console-clear-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.log-console-clear-btn:hover {
+  color: var(--kuroneko-text-primary, #ffffff);
 }
 
 .log-console-body {
   flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  line-height: 1.3;
   /* Zero animation enforced */
   transition: none !important;
   animation: none !important;
+}
+
+.log-empty {
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
+  padding: 4px;
+}
+
+.log-entry {
+  display: flex;
+  gap: 8px;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.log-entry:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.log-time {
+  color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.log-level {
+  flex-shrink: 0;
+  width: 48px;
+  text-transform: uppercase;
+}
+
+.level-debug { color: #71717a; }
+.level-info { color: #60a5fa; }
+.level-warning { color: #eab308; }
+.level-error { color: #ef4444; }
+.level-critical { color: #dc2626; font-weight: bold; }
+.level-default { color: #d4d4d8; }
+
+.log-source {
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  width: 96px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.log-message {
+  word-break: break-all;
+  white-space: pre-wrap;
+  color: var(--kuroneko-text-primary, #ffffff);
 }
 
 /* Custom scrollbar for the log console */
@@ -23,10 +107,10 @@
 }
 
 .log-console-body::-webkit-scrollbar-thumb {
-  background: #3f3f46; /* zinc-700 */
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 
 .log-console-body::-webkit-scrollbar-thumb:hover {
-  background: #52525b; /* zinc-600 */
+  background: rgba(255, 255, 255, 0.25);
 }

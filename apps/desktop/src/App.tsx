@@ -107,9 +107,11 @@ export function App() {
         </Card>
       </section>
 
-      <div style={{ height: "300px", marginTop: "24px" }}>
-        <LogConsole client={client} />
-      </div>
+      <section className="grid" style={{ marginTop: "24px" }}>
+        <Card className="span-3" style={{ height: "300px", display: "flex", flexDirection: "column", padding: 0, overflow: "hidden" }}>
+          <LogConsole client={client} />
+        </Card>
+      </section>
 
       <Panel>
         <h2>Bridge 健康</h2>
