@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { BridgeClient, PreviewFrame } from "../../../services/bridge-client";
 import "./PreviewCanvas.css";
 
@@ -28,6 +29,10 @@ export function PreviewCanvas({ client }: PreviewCanvasProps) {
           originalWidth: data.originalWidth || (data.payload && data.payload.originalWidth) || 800,
           originalHeight: data.originalHeight || (data.payload && data.payload.originalHeight) || 600,
         });
+      } else if (event.type === "session/updated") {
+        if (event.payload.status === "idle") {
+          setFrame(null);
+        }
       }
     });
 
@@ -38,19 +43,15 @@ export function PreviewCanvas({ client }: PreviewCanvasProps) {
     return (
       <div className="preview-canvas empty">
         <p>等待图像推流...</p>
-        <p className="hint">请先在上方选择目标窗口</p>
+        <p className="hint">请先选择目标窗口并开始运行</p>
       </div>
     );
   }
 
-  return (
-    <div 
-      className={`preview-canvas ${isFullscreen ? 'fullscreen' : ''}`}
-      onClick={() => setIsFullscreen(!isFullscreen)}
-      title={isFullscreen ? "Click to exit fullscreen" : "Click to enter fullscreen"}
-    >
+  const innerContent = (
+    <>
       {isFullscreen && (
-        <button 
+        <button
           className="preview-close-btn"
           onClick={(e) => {
             e.stopPropagation();
@@ -61,9 +62,9 @@ export function PreviewCanvas({ client }: PreviewCanvasProps) {
         </button>
       )}
       <img src={frame.image} alt="Preview Stream" />
-      
-      <svg 
-        className="overlay-layer" 
+
+      <svg
+        className="overlay-layer"
         viewBox={`0 0 ${frame.originalWidth} ${frame.originalHeight}`}
         preserveAspectRatio="xMidYMid meet"
       >
@@ -105,6 +106,36 @@ export function PreviewCanvas({ client }: PreviewCanvasProps) {
           );
         })}
       </svg>
-    </div>
+    </>
+  );
+
+  const fullscreenNode = isFullscreen ? createPortal(
+    <div
+      className="preview-canvas fullscreen"
+      onClick={() => setIsFullscreen(false)}
+      title="Click to exit fullscreen"
+    >
+      {innerContent}
+    </div>,
+    document.body
+  ) : null;
+
+  return (
+    <>
+      <div
+        className={`preview-canvas ${isFullscreen ? 'placeholder' : ''}`}
+        onClick={() => !isFullscreen && setIsFullscreen(true)}
+        title={!isFullscreen ? "Click to enter fullscreen" : ""}
+      >
+        {!isFullscreen && innerContent}
+        {isFullscreen && (
+          <>
+            <img src={frame.image} alt="Preview Stream" />
+            <div className="placeholder-hint">全屏展示中...</div>
+          </>
+        )}
+      </div>
+      {fullscreenNode}
+    </>
   );
 }

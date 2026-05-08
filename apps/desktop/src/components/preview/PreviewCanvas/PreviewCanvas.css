@@ -14,8 +14,32 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.preview-canvas:hover {
+.preview-canvas:hover:not(.placeholder) {
   box-shadow: 0 0 15px rgba(204, 255, 255, 0.2);
+}
+
+.preview-canvas.placeholder {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.preview-canvas.placeholder:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.placeholder-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  pointer-events: none;
 }
 
 .preview-canvas.fullscreen {

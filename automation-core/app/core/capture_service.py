@@ -57,6 +57,13 @@ class CaptureService:
                 summary = self.session_service.get_summary()
                 window_id = summary.windowId
 
+                if summary.status == "idle":
+                    if frame_count % 30 == 0:
+                        logger.debug("Session is idle, skipping capture.")
+                    frame_count += 1
+                    await asyncio.sleep(0.1)
+                    continue
+
                 if not window_id:
                     if frame_count % 30 == 0:
                         logger.debug("No window_id selected in session, skipping capture.")
