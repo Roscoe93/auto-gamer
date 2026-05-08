@@ -7,6 +7,7 @@ import { WindowSelector } from "./components/controls/WindowSelector";
 import { RunControls } from "./components/controls/RunControls";
 import { ScriptPanel } from "./components/scripts/ScriptPanel";
 import { PreviewCanvas } from "./components/preview/PreviewCanvas";
+import { LogConsole } from "./components/logs/LogConsole";
 import "./App.css";
 
 const defaultSession: SessionSummary = {
@@ -105,6 +106,10 @@ export function App() {
           <RunControls client={client} session={session} />
         </Card>
       </section>
+
+      <div style={{ height: "300px", marginTop: "24px" }}>
+        <LogConsole client={client} />
+      </div>
 
       <Panel>
         <h2>Bridge 健康</h2>

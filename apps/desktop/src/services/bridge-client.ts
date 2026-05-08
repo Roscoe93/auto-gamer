@@ -52,6 +52,13 @@ export interface PreviewFrame {
   originalHeight: number;
 }
 
+export interface LogEntry {
+  timestamp: string;
+  level: "debug" | "info" | "warning" | "error" | "critical";
+  source: string;
+  message: string;
+}
+
 type BridgeEvent =
   | { type: "connection/status"; payload: { state: string } }
   | { type: "connection/heartbeat"; payload: { ts: string } }
@@ -62,6 +69,7 @@ type BridgeEvent =
   | { type: "profiles/saved"; payload: Profile }
   | { type: "profiles/deleted"; payload: { id: string } }
   | { type: "preview/frame"; payload: PreviewFrame }
+  | { type: "log/entry"; payload: LogEntry }
   | { type: "error"; payload: { code: string; message: string } };
 
 type BridgeListener = (event: BridgeEvent) => void;
