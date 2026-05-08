@@ -8,6 +8,7 @@ interface PreviewCanvasProps {
 
 export function PreviewCanvas({ client }: PreviewCanvasProps) {
   const [frame, setFrame] = useState<PreviewFrame | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = client.subscribe((event) => {
@@ -43,7 +44,22 @@ export function PreviewCanvas({ client }: PreviewCanvasProps) {
   }
 
   return (
-    <div className="preview-canvas">
+    <div 
+      className={`preview-canvas ${isFullscreen ? 'fullscreen' : ''}`}
+      onClick={() => setIsFullscreen(!isFullscreen)}
+      title={isFullscreen ? "Click to exit fullscreen" : "Click to enter fullscreen"}
+    >
+      {isFullscreen && (
+        <button 
+          className="preview-close-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsFullscreen(false);
+          }}
+        >
+          CLOSE
+        </button>
+      )}
       <img src={frame.image} alt="Preview Stream" />
       
       <svg 
