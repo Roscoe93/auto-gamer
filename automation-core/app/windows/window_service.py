@@ -3,8 +3,10 @@ from __future__ import annotations
 import platform
 import subprocess
 import sys
+import logging
 from dataclasses import dataclass
 
+logger = logging.getLogger("kuroneko.window")
 
 @dataclass
 class Window:
@@ -114,21 +116,28 @@ class WindowService:
                 tell process "{app_name}"
                     set p to position of window 1
                     set s to size of window 1
-                    return (item 1 of p) & "," & (item 2 of p) & "," & (item 1 of s) & "," & (item 2 of s)
+                    return {{item 1 of p, item 2 of p, item 1 of s, item 2 of s}}
                 end tell
             end tell
             '''
             try:
                 output = subprocess.check_output(["osascript", "-e", script], text=True, stderr=subprocess.PIPE).strip()
             except subprocess.CalledProcessError as e:
-                print(f"[WindowService] Failed to get rect for {app_name}: {e.stderr}", file=sys.stderr)
+                logger.error(f"Failed to get rect for {app_name}: {e.stderr.strip() if e.stderr else 'Unknown error'}")
                 return None
 
             if output:
-                x, y, w, h = map(int, output.split(","))
-                return WindowRect(x=x, y=y, width=w, height=h)
+                try:
+                    logger.debug(f"AppleScript raw output for {app_name}: '{output}'")
+                    parts = [p.strip() for p in output.split(",")]
+                    x, y, w, h = map(int, parts)
+                    return WindowRect(x=x, y=y, width=w, height=h)
+                except ValueError as ve:
+                    logger.error(f"Failed to parse AppleScript output '{output}': {ve}")
+                    return None
             return None
-        except Exception:
+        except Exception as e:
+            logger.error(f"Unexpected error in _get_mac_window_rect: {e}")
             return None
 
     def _bring_mac_window_to_front(self, window_id: str) -> bool:
@@ -150,10 +159,10 @@ class WindowService:
                 subprocess.check_output(["osascript", "-e", script], stderr=subprocess.PIPE)
                 return True
             except subprocess.CalledProcessError as e:
-                print(f"[WindowService] Failed to bring to front {app_name}: {e.stderr}", file=sys.stderr)
+                logger.error(f"Failed to bring to front {app_name}: {e.stderr.strip() if e.stderr else 'Unknown error'}")
                 return False
         except Exception as e:
-            print(f"[WindowService] Unexpected error: {e}", file=sys.stderr)
+            logger.error(f"Unexpected error in _bring_mac_window_to_front: {e}")
             return False
 
     def _list_windows_windows(self) -> list[Window]:
@@ -212,13 +221,16 @@ class WindowService:
             ignore_list = ["Finder", "System Settings", "Terminal", "Code", "Cursor", "Activity Monitor"]
             windows = []
 
-            for i, name in enumerate(apps):
+            for name in apps:
                 if name not in ignore_list:
-                    windows.append(Window(f"mac_app_{i}", name))
+                    # Use a more stable ID instead of index
+                    safe_name = name.replace(" ", "_")
+                    windows.append(Window(f"mac_app_{safe_name}", name))
 
             if not windows:
                 windows.append(Window("mock_mac_1", "No other visible apps found"))
 
             return windows
         except Exception as e:
+            logger.error(f"Error listing windows: {e}")
             return [Window("error_win", f"Error listing windows: {e}")]

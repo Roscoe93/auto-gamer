@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import asyncio
 import uuid
+import logging
 from typing import Callable
 
 from app.core.session_service import SessionService
 
+logger = logging.getLogger("kuroneko.run")
 
 class RunController:
     def __init__(self, session_service: SessionService, on_state_changed: Callable[[], None] | None = None) -> None:
@@ -26,6 +28,7 @@ class RunController:
         summary.metrics.actionCount = 0
         summary.metrics.resumeCount = 0
 
+        logger.info(f"Run started: {summary.runId}")
         self._notify()
 
         if self._run_task and not self._run_task.done():
@@ -38,6 +41,7 @@ class RunController:
             raise ValueError(f"Cannot pause from state: {summary.status}")
         
         summary.status = "paused"
+        logger.info(f"Run paused: {summary.runId}")
         self._notify()
 
     def resume(self) -> None:
@@ -47,6 +51,7 @@ class RunController:
         
         summary.status = "running"
         summary.metrics.resumeCount += 1
+        logger.info(f"Run resumed: {summary.runId}")
         self._notify()
 
     def stop(self) -> None:
@@ -54,6 +59,7 @@ class RunController:
         if summary.status == "idle":
             return
             
+        logger.info(f"Run stopped: {summary.runId}")
         summary.status = "idle"
         summary.runId = None
         self._notify()

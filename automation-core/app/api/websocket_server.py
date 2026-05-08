@@ -9,6 +9,7 @@ from websockets.asyncio.server import ServerConnection, serve
 from app.core.session_service import SessionService
 from app.core.run_controller import RunController
 from app.core.capture_service import CaptureService
+from app.core.log_service import LogService
 from app.windows.window_service import WindowService
 from app.scripts.registry import ScriptRegistry
 from app.scripts.profile_manager import ProfileManager
@@ -33,6 +34,8 @@ class BridgeWebSocketServer:
         self._profile_manager = ProfileManager()
         self._capture_service = CaptureService(self._session_service, self._window_service)
         self._capture_service.add_listener(self._on_preview_frame)
+        self._log_service = LogService()
+        self._log_service.add_listener(self._on_log_entry)
 
         # Setup Router
         self._router = MessageRouter()
@@ -45,8 +48,19 @@ class BridgeWebSocketServer:
 
     def _on_preview_frame(self, payload: dict) -> None:
         raw_payload = json.dumps(payload)
-        for conn in self._active_connections:
-            asyncio.create_task(conn.send(raw_payload))
+        for conn in list(self._active_connections):
+            try:
+                asyncio.create_task(conn.send(raw_payload))
+            except Exception:
+                self._active_connections.discard(conn)
+
+    def _on_log_entry(self, payload: dict) -> None:
+        raw_payload = json.dumps({"type": "log/entry", "payload": payload})
+        for conn in list(self._active_connections):
+            try:
+                asyncio.create_task(conn.send(raw_payload))
+            except Exception:
+                self._active_connections.discard(conn)
 
     def _on_state_changed(self) -> None:
         # Broadcast state change to all active connections
@@ -79,6 +93,10 @@ class BridgeWebSocketServer:
         self._active_connections.add(connection)
         heartbeat_task = asyncio.create_task(self._heartbeat_loop(connection))
         await connection.send(json.dumps({"type": "connection/status", "payload": {"state": "connected"}}))
+        
+        # Send recent logs
+        for log_entry in self._log_service.get_recent_logs():
+            await connection.send(json.dumps({"type": "log/entry", "payload": log_entry}))
 
         try:
             async for raw_message in connection:
